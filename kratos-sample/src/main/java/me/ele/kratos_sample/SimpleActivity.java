@@ -14,7 +14,7 @@ import me.ele.kratos.Kratos;
 public class SimpleActivity extends Activity {
 
     @BindText({R.id.test_doublebinding_input, R.id.test_doublebinding_presenter})
-    KString bindedData = new KString();
+    KString boundData = new KString();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

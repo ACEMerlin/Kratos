@@ -30,3 +30,5 @@ buildscript {
 repositories {
     mavenCentral()
 }
+
+apply from: rootProject.file('gradle/gradle-mvn-push.gradle')

@@ -14,3 +14,5 @@ for (File file : sdkHandler.sdkLoader.repositories) {
 dependencies {
     compile 'com.android.support:support-annotations:23.1.1'
 }
+
+apply from: rootProject.file('gradle/gradle-mvn-push.gradle')

@@ -2,3 +2,5 @@ include ':kratos'
 include ':kratos-annotation'
 include ':kratos-compiler'
 include ':kratos-sample'
+
+rootProject.name = 'kratos-parent'
