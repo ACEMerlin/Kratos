@@ -1,0 +1,12 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+/kratos/build
+/kratos-annotation/build
+/kratos-compiler/build
+/kratos-sample/build
+*.hprof

@@ -1,0 +1,4 @@
+include ':kratos'
+include ':kratos-annotation'
+include ':kratos-compiler'
+include ':kratos-sample'
