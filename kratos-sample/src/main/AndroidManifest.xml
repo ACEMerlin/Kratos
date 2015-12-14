@@ -16,5 +16,8 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+
+        <activity android:name=".CardSampleActivity"
+            android:theme="@style/Theme.AppCompat"/>
     </application>
 </manifest>

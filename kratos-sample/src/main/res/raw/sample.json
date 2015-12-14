@@ -1,0 +1,67 @@
+{
+  "header": {
+    "title": "Card Sample"
+  },
+  "body": [
+    {
+      "data": {
+        "text": "init data1"
+      },
+      "type": "KTextCard",
+      "id": "avatarCard1",
+      "style": {
+        "margin_top": 20,
+        "margin_left": 20,
+        "margin_right": 20
+      }
+    },
+    {
+      "data": {
+        "text": "init data2"
+      },
+      "type": "KTextCard",
+      "id": "avatarCard2",
+      "style": {
+        "margin_top": 20,
+        "margin_left": 20,
+        "margin_right": 20
+      }
+    },
+    {
+      "data": {
+        "text": "init data3"
+      },
+      "type": "KTextCard",
+      "id": "avatarCard3",
+      "style": {
+        "margin_top": 20,
+        "margin_left": 20,
+        "margin_right": 20
+      }
+    },
+    {
+      "data": {
+        "text": "init data4"
+      },
+      "type": "KTextCard",
+      "id": "avatarCard4",
+      "style": {
+        "margin_top": 20,
+        "margin_left": 20,
+        "margin_right": 20
+      }
+    },
+    {
+      "data": {
+        "text": "Each one of the view here is Card!\nThis page was generated from sample.json!"
+      },
+      "type": "KTextCard",
+      "id": "avatarCard5",
+      "style": {
+        "margin_top": 20,
+        "margin_left": 20,
+        "margin_right": 20
+      }
+    }
+  ]
+}

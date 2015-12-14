@@ -7,6 +7,7 @@ import android.util.Log;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import kratos.card.KCard;
 import kratos.internal.KBinder;
 import kratos.internal.KFinder;
 
@@ -24,6 +25,10 @@ public final class Kratos {
 
     public static void bind(@NonNull Activity target) {
         bind(target, KFinder.ACTIVITY);
+    }
+
+    public static void bind(@NonNull KCard target) {
+        bind(target, KFinder.KCARD);
     }
 
     static void bind(@NonNull Object target, @NonNull KFinder finder) {

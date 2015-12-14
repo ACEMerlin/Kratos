@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Kratos-sample</string>
+    <string name="jump_card_sample">Jump to Card Sample Activity</string>
 </resources>

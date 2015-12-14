@@ -28,14 +28,16 @@ public class BindingClass {
     private static final ClassName KBINDER = ClassName.get("kratos.internal", "KBinder");
     private static final ClassName KFINDER = ClassName.get("kratos.internal", "KFinder");
     static final int NO_ID = -1;
+    private final boolean isKotlin;
 
     private final Map<String, KBindings> viewIdMap = new LinkedHashMap<>();
 
-    BindingClass(String classPackage, String className, String targetClass, String resPackage) {
+    BindingClass(String classPackage, String className, String targetClass, String resPackage, Boolean isKotlin) {
         this.classPackage = classPackage;
         this.className = className;
         this.targetClass = targetClass;
         this.resClass = ClassName.get(resPackage, "R");
+        this.isKotlin = isKotlin;
     }
 
     void setParentViewBinder(String parentViewBinder) {
@@ -139,7 +141,13 @@ public class BindingClass {
             } else {
                 result.addStatement("$T $L = view", ClassName.get("android.view", "View"), fieldBinding.getName() + bindings.getId());
             }
-            result.addStatement("target.$L.bind($L)", fieldBinding.getName(), fieldBinding.getName() + bindings.getId());
+            if (isKotlin) {
+                String name = fieldBinding.getName();
+                result.addStatement("target.get$L().bind($L)", name.substring(0, 1).toUpperCase() + name.substring(1, name.length()), name + bindings.getId());
+            }
+             else {
+                result.addStatement("target.$L.bind($L)", fieldBinding.getName(), fieldBinding.getName() + bindings.getId());
+            }
         }
     }
 

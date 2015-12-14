@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/tuatara"
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
@@ -9,11 +10,29 @@
         android:id="@+id/test_doublebinding_presenter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="14dp" />
+        android:layout_margin="20dp"
+        android:background="@color/white"
+        android:padding="14dp"
+        android:textColor="@color/text_black" />
 
     <EditText
         android:id="@+id/test_doublebinding_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="14dp" />
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/white"
+        android:padding="14dp"
+        android:textColor="@color/text_black"
+        android:textCursorDrawable="@null" />
+
+    <Button
+        android:id="@+id/card_sample"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:background="@color/bleu"
+        android:padding="14dp"
+        android:text="@string/jump_card_sample"
+        android:textColor="@color/text_black" />
 </LinearLayout>

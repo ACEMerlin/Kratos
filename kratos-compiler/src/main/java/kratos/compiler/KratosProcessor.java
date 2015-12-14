@@ -135,7 +135,7 @@ public class KratosProcessor extends AbstractProcessor {
         }
         // Assemble information on the field.
         String[] ids = element.getAnnotation(BindString.class).value();
-        BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement);
+        BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement, true);
         for (String id : ids) {
             if (bindingClass != null) {
                 KBindings bindings = bindingClass.getKBindings(String.valueOf(id));
@@ -150,7 +150,7 @@ public class KratosProcessor extends AbstractProcessor {
                     }
                 }
             } else {
-                bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement);
+                bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement, true);
             }
             String name = element.getSimpleName().toString();
             TypeName type = TypeName.get(elementType);
@@ -175,7 +175,7 @@ public class KratosProcessor extends AbstractProcessor {
         }
         // Assemble information on the field.
         int[] ids = element.getAnnotation(BindText.class).value();
-        BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement);
+        BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement, false);
         for (int id : ids) {
             if (bindingClass != null) {
                 KBindings bindings = bindingClass.getKBindings(String.valueOf(id));
@@ -190,7 +190,7 @@ public class KratosProcessor extends AbstractProcessor {
                     }
                 }
             } else {
-                bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement);
+                bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement, false);
             }
             String name = element.getSimpleName().toString();
             TypeName type = TypeName.get(elementType);
@@ -234,14 +234,14 @@ public class KratosProcessor extends AbstractProcessor {
     }
 
     private BindingClass getOrCreateTargetClass(Map<TypeElement, BindingClass> targetClassMap,
-                                               TypeElement enclosingElement) {
+                                               TypeElement enclosingElement, Boolean isKotlin) {
         BindingClass bindingClass = targetClassMap.get(enclosingElement);
         if (bindingClass == null) {
             String targetType = enclosingElement.getQualifiedName().toString();
             String classPackage = getPackageName(enclosingElement);
             String className = getClassName(enclosingElement, classPackage) + BINDING_CLASS_SUFFIX;
-            String[] three = classPackage.split("\\.");
-            bindingClass = new BindingClass(classPackage, className, targetType, three[0] + "." + three[1] + "." + three[2]);
+            String[] name = classPackage.split("\\.");
+            bindingClass = new BindingClass(classPackage, className, targetType, name[0], isKotlin);
             targetClassMap.put(enclosingElement, bindingClass);
         }
         return bindingClass;
