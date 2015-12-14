@@ -1,4 +1,4 @@
-package me.ele.kratos;
+package kratos;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
@@ -7,8 +7,8 @@ import android.util.Log;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import me.ele.kratos.internal.KBinder;
-import me.ele.kratos.internal.KFinder;
+import kratos.internal.KBinder;
+import kratos.internal.KFinder;
 
 /**
  * Created by merlin on 15/12/7.

@@ -1,4 +1,4 @@
-package com.kratos;
+package kratos.compiler;
 
 /**
  * Created by merlin on 15/12/7.

@@ -1,4 +1,4 @@
-package com.kratos;
+package kratos.compiler;
 
 import java.util.ArrayList;
 import java.util.Collection;

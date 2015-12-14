@@ -1,4 +1,4 @@
-package com.kratos;
+package kratos.compiler;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -25,8 +25,8 @@ public class BindingClass {
     private final String targetClass;
     private final ClassName resClass;
     private String parentViewBinder;
-    private static final ClassName KBINDER = ClassName.get("me.ele.kratos.internal", "KBinder");
-    private static final ClassName KFINDER = ClassName.get("me.ele.kratos.internal", "KFinder");
+    private static final ClassName KBINDER = ClassName.get("kratos.internal", "KBinder");
+    private static final ClassName KFINDER = ClassName.get("kratos.internal", "KFinder");
     static final int NO_ID = -1;
 
     private final Map<String, KBindings> viewIdMap = new LinkedHashMap<>();

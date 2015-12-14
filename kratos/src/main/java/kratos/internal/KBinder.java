@@ -1,4 +1,4 @@
-package me.ele.kratos.internal;
+package kratos.internal;
 
 /**
  * Created by merlin on 15/12/7.

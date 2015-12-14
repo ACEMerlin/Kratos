@@ -1,4 +1,4 @@
-package io.nothing.kratos.db
+package kratos.internal
 
 import android.text.Editable
 import android.text.TextWatcher
