@@ -3,6 +3,7 @@ package kratos.compiler;
 import com.squareup.javapoet.TypeName;
 
 import static kratos.compiler.KratosProcessor.VIEW_TYPE;
+
 /**
  * Created by merlin on 15/12/7.
  */

@@ -144,8 +144,7 @@ public class BindingClass {
             if (isKotlin) {
                 String name = fieldBinding.getName();
                 result.addStatement("target.get$L().bind($L)", name.substring(0, 1).toUpperCase() + name.substring(1, name.length()), name + bindings.getId());
-            }
-             else {
+            } else {
                 result.addStatement("target.$L.bind($L)", fieldBinding.getName(), fieldBinding.getName() + bindings.getId());
             }
         }

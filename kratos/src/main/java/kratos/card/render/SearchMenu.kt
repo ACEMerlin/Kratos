@@ -1,4 +1,4 @@
 package kratos.card.render
 
-class SearchMenu<T>: Menu<SearchStyle>() {
+class SearchMenu<T> : Menu<SearchStyle>() {
 }

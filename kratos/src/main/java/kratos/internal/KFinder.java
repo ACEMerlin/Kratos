@@ -11,11 +11,13 @@ import kratos.card.KCard;
  */
 public enum KFinder {
     ACTIVITY {
-        @Override protected View findView(Object source, int id) {
+        @Override
+        protected View findView(Object source, int id) {
             return ((Activity) source).findViewById(id);
         }
 
-        @Override public Context getContext(Object source) {
+        @Override
+        public Context getContext(Object source) {
             return (Activity) source;
         }
     },

@@ -13,21 +13,18 @@ import kratos.card.KCard;
 /**
  * Created by sanvi on 11/26/15.
  */
-public class GsonUtilsCreator implements InstanceCreator<KCard>
-{
+public class GsonUtilsCreator implements InstanceCreator<KCard> {
     private Context context;
 
-    public GsonUtilsCreator(Context context)
-    {
+    public GsonUtilsCreator(Context context) {
         this.context = context;
     }
 
     @Override
-    public KCard createInstance(Type type)
-    {
+    public KCard createInstance(Type type) {
         KCard np = null;
         try {
-            np = (KCard) Class.forName(type.toString().replace("class ","")).getConstructor(Context.class).newInstance(context);
+            np = (KCard) Class.forName(type.toString().replace("class ", "")).getConstructor(Context.class).newInstance(context);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

@@ -125,7 +125,7 @@ public class KratosProcessor extends AbstractProcessor {
     }
 
     private void parseBindString(Element element, Map<TypeElement, BindingClass> targetClassMap,
-                               Set<String> erasedTargetNames) {
+                                 Set<String> erasedTargetNames) {
         TypeElement enclosingElement = (TypeElement) element.getEnclosingElement();
 
         TypeMirror elementType = element.asType();
@@ -234,7 +234,7 @@ public class KratosProcessor extends AbstractProcessor {
     }
 
     private BindingClass getOrCreateTargetClass(Map<TypeElement, BindingClass> targetClassMap,
-                                               TypeElement enclosingElement, Boolean isKotlin) {
+                                                TypeElement enclosingElement, Boolean isKotlin) {
         BindingClass bindingClass = targetClassMap.get(enclosingElement);
         if (bindingClass == null) {
             String targetType = enclosingElement.getQualifiedName().toString();

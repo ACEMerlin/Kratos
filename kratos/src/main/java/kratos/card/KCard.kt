@@ -5,9 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import de.greenrobot.event.EventBus
-import kratos.Kratos
-import kratos.card.event.KOnClickEvent
 import kratos.card.entity.KData
+import kratos.card.event.KOnClickEvent
 import kratos.card.render.Style
 import kratos.card.utils.Skip
 
@@ -23,7 +22,7 @@ open class KCard<T : KData>() {
     @Skip
     var context: Context? = null
 
-    constructor(context: Context): this(){
+    constructor(context: Context) : this() {
         this.context = context
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         if ( getResourceLayoutId() != 0) {
@@ -31,11 +30,11 @@ open class KCard<T : KData>() {
         }
     }
 
-    public fun show(){
+    public fun show() {
         rootView?.visibility = View.VISIBLE
     }
 
-    public fun hide(){
+    public fun hide() {
         rootView?.visibility = View.GONE
     }
 
@@ -73,7 +72,7 @@ open class KCard<T : KData>() {
         return 0
     }
 
-    open public fun getValue():String{
+    open public fun getValue(): String {
         return ""
     }
 

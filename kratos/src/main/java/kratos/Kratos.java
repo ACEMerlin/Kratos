@@ -15,12 +15,16 @@ import kratos.internal.KFinder;
  * Created by merlin on 15/12/7.
  */
 public final class Kratos {
-    private Kratos() {}
+    private Kratos() {
+    }
+
     private static final String TAG = "Kratos";
 
     static final Map<Class<?>, KBinder<Object>> BINDERS = new LinkedHashMap<>();
     static final KBinder<Object> NOP_VIEW_BINDER = new KBinder<Object>() {
-        @Override public void bind(Object target, KFinder finder) { }
+        @Override
+        public void bind(Object target, KFinder finder) {
+        }
     };
 
     public static void bind(@NonNull Activity target) {

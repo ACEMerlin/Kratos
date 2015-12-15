@@ -13,15 +13,16 @@ import com.google.gson.GsonBuilder;
 public class GsonUtils {
     public static Gson gson;
     private static GsonUtils instance;
-    public static GsonUtils getInstance(){
-        if(instance == null) {
+
+    public static GsonUtils getInstance() {
+        if (instance == null) {
             instance = new GsonUtils();
         }
         return instance;
     }
 
     public Gson getGson() {
-        return getGson(null,null);
+        return getGson(null, null);
     }
 
     public static Gson getGson(Context context, Class clazz) {
@@ -49,7 +50,7 @@ public class GsonUtils {
             }
         });
 
-        if(clazz != null && context != null) {
+        if (clazz != null && context != null) {
             gsonBuilder.registerTypeAdapter(clazz, new GsonUtilsCreator(context));
         }
         return gsonBuilder.setPrettyPrinting()

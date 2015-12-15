@@ -5,23 +5,23 @@
     android:orientation="vertical">
 
 
-        <RelativeLayout
-            android:id="@+id/kcard_main_footer"
+    <RelativeLayout
+        android:id="@+id/kcard_main_footer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:scrollbars="none"
+            android:fillViewport="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ScrollView
-                android:scrollbars="none"
-                android:fillViewport="true"
+            <LinearLayout
+                android:id="@+id/kcard_main_content"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical" />
+        </ScrollView>
 
-                <LinearLayout
-                    android:id="@+id/kcard_main_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" />
-            </ScrollView>
-
-        </RelativeLayout>
+    </RelativeLayout>
 </LinearLayout>

@@ -20,14 +20,14 @@ class KTextCard : KCard<KText> {
     @BindString("kcard_avatar_text")
     public var _text = KString()
 
-    constructor(context: Context): super(context){
+    constructor(context: Context) : super(context) {
+        Kratos.bind(this)
         text = findViewById(R.id.kcard_avatar_text) as TextView
         rootView?.setOnClickListener { onLink() }
-        Kratos.bind(this)
     }
 
     override fun refresh() {
-       _text.data = data?.text!!
+        _text.data = data?.text!!
     }
 
     override fun getResourceLayoutId(): Int {

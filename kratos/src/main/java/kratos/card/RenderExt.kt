@@ -5,9 +5,9 @@ import android.util.Log
 import android.view.Menu
 import android.view.ViewGroup
 import android.widget.RelativeLayout
-import kratos.card.utils.DelegateExt
 import kratos.card.entity.KData
 import kratos.card.render.*
+import kratos.card.utils.DelegateExt
 import kratos.card.utils.GsonUtils
 import kratos.card.utils.OnCardRenderListener
 import org.json.JSONArray

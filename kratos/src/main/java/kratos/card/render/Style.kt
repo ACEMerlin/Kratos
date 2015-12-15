@@ -13,6 +13,6 @@ open class Style : Serializable {
     var normal_color: String? = null
     var pressed_color: String? = null
     var href_color: String? = null
-    var text_type: String? =null
-    var text_length:Int ?= null
+    var text_type: String? = null
+    var text_length: Int ? = null
 }
