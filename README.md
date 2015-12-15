@@ -63,7 +63,24 @@ Download
 -----------------
 __Kratos is still under development and a lot of features haven't been added to it yet.__ But the basic idea is here. If you are interested in this project, feel free to fork.
 
-Kratos is currently not available from maven central. 
+Kratos is available from maven central:
+
+```groovy
+apply plugin: 'com.neenbedankt.android-apt'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+    }
+}
+
+dependencies {
+    compile 'com.github.acemerlin:kratos:0.1'
+    apt 'com.github.acemerlin:kratos-compiler:0.1'
+}
+```
 
 How It Works
 ----------------
