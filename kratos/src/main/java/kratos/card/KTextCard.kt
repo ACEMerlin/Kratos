@@ -15,15 +15,16 @@ import kratos.internal.KString
 class KTextCard : KCard<KText> {
 
     @Skip
-    var text: TextView? = null
-    @Skip
-    @BindString("kcard_avatar_text")
-    public var _text = KString()
+    @BindString("kcard_text_text")
+    public var _text = KString {
+        it, new ->
+        it as TextView
+        it.text = new
+    }
 
     constructor(context: Context) : super(context) {
         Kratos.bind(this)
-        text = findViewById(R.id.kcard_avatar_text) as TextView
-        rootView?.setOnClickListener { onLink() }
+        setOnLinkListener()
     }
 
     override fun refresh() {

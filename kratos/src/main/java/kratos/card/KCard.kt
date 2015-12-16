@@ -30,6 +30,10 @@ open class KCard<T : KData>() {
         }
     }
 
+    protected fun setOnLinkListener() {
+        rootView?.setOnClickListener { onLink() }
+    }
+
     public fun show() {
         rootView?.visibility = View.VISIBLE
     }

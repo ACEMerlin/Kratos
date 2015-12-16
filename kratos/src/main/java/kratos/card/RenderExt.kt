@@ -56,7 +56,7 @@ fun Context.toTemplate(template: String): Template? {
 
         if (`object`.has("header")) {
             t.header = gson.fromJson(`object`.getString("header"), Header::class.java)
-            if (t.header!!.menus!!.size > 0) {
+            if (t.header!!.menus.size > 0) {
                 t.header!!.menus = arrayListOf()
                 var list = JSONArray(`object`.getJSONObject("header").getString("menus"))
                 for (i in 0..list.length() - 1) {
@@ -76,7 +76,7 @@ fun Context.toTemplate(template: String): Template? {
                 val jsonObject = jsonObjectList.getJSONObject(i)
                 Log.d("KCARD.jsonobject", jsonObject.toString())
                 var jsonString = jsonObject.toString()
-                jsonString = onCardRenderListener!!.onRender(jsonString)
+                jsonString = onCardRenderListener.onRender(jsonString)
                 var clazz = Class.forName("kratos.card." + jsonObject.get("type"))
                 t.body.add(GsonUtils.getGson(this, clazz).fromJson<KCard<KData>>(jsonString, clazz))
             }
@@ -87,7 +87,7 @@ fun Context.toTemplate(template: String): Template? {
                 val jsonObject = jsonObjectParentList.getJSONObject(i)
                 Log.d("KCARD.jsonobject", jsonObjectParentList.toString())
                 var jsonString = jsonObject.toString()
-                jsonString = onCardRenderListener?.onRender(jsonString)
+                jsonString = onCardRenderListener.onRender(jsonString)
                 var clazz = Class.forName("kratos.card." + jsonObject.get("type"))
                 t.footer.add(GsonUtils.getGson(this, clazz).fromJson<KCard<KData>>(jsonString, clazz))
             }
