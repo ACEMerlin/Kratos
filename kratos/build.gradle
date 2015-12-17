@@ -12,7 +12,6 @@ android {
 
 dependencies {
     compile project(':kratos-annotation')
-    kapt project(':kratos-compiler')
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'de.greenrobot:eventbus:2.4.0'
