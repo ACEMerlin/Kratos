@@ -7,7 +7,7 @@
       "data": {
         "text": "init data1"
       },
-      "type": "KTextCard",
+      "type": "TextCard",
       "id": "textCard1",
       "style": {
         "margin_top": 20,
@@ -19,7 +19,7 @@
       "data": {
         "text": "init data2"
       },
-      "type": "KTextCard",
+      "type": "TextCard",
       "id": "textCard2",
       "style": {
         "margin_top": 20,
@@ -31,7 +31,7 @@
       "data": {
         "text": "init data3"
       },
-      "type": "KTextCard",
+      "type": "TextCard",
       "id": "textCard3",
       "style": {
         "margin_top": 20,
@@ -43,7 +43,7 @@
       "data": {
         "text": "init data4"
       },
-      "type": "KTextCard",
+      "type": "TextCard",
       "id": "textCard4",
       "style": {
         "margin_top": 20,
@@ -55,7 +55,7 @@
       "data": {
         "text": "Each one of the view here is Card!\nThis page was generated from sample.json!"
       },
-      "type": "KTextCard",
+      "type": "TextCard",
       "id": "textCard5",
       "style": {
         "margin_top": 20,
