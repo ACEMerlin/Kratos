@@ -107,8 +107,8 @@ buildscript {
 }
 
 dependencies {
-    compile 'com.github.acemerlin:kratos:$kratos_version'
-    apt 'com.github.acemerlin:kratos-compiler:$kratos_version'
+    compile "com.github.acemerlin:kratos:$kratos_version"
+    apt "com.github.acemerlin:kratos-compiler:$kratos_version"
 }
 ```
 
