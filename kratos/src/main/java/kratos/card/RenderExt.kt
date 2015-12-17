@@ -1,32 +1,52 @@
 package kratos.card
 
 import android.content.Context
+import android.graphics.Color
+import android.support.v7.widget.SearchView
+import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.RelativeLayout
+import android.widget.TextView
+import kratos.R
 import kratos.card.entity.KData
 import kratos.card.render.*
 import kratos.card.utils.DelegateExt
+import kratos.card.utils.DrawableUtils
 import kratos.card.utils.GsonUtils
 import kratos.card.utils.OnCardRenderListener
 import org.json.JSONArray
 import org.json.JSONObject
 
-fun KCardActivity.render(viewGroup: ViewGroup, footerViewGroup: ViewGroup, cb: (template: Template) -> Unit) {
+fun KCardActivity.render(viewGroup: ViewGroup, footerViewGroup: ViewGroup, toolbar: Toolbar, cb: (template: Template) -> Unit) {
     onRender(getIntent().extras.getString(Template.BUNDLE_TEMPLAT), { json ->
-        cb(renderTemplate(viewGroup, footerViewGroup, json, this))
+        cb(renderTemplate(viewGroup, footerViewGroup, toolbar, json, this))
     })
 }
 
 public var Context.onCardRenderListener: OnCardRenderListener by DelegateExt.notNullCardRenderListener<OnCardRenderListener>()
 public var cards: Map<String, KCard<KData>> = emptyMap()
 
-fun Context.renderTemplate(viewGroup: ViewGroup, footerViewGroup: ViewGroup, templateString: String, context: Context): Template {
+fun Context.renderTemplate(viewGroup: ViewGroup, footerViewGroup: ViewGroup, toolbar: Toolbar, templateString: String, context: Context): Template {
     Log.d("RenderExt", "$templateString")
     viewGroup.removeAllViews()
     cards = emptyMap()
     var template: Template = toTemplate(templateString) as Template
+    template.header?.title?.let {
+        toolbar.title = template.header?.title
+    }
+    template.header?.icon?.let {
+        toolbar.navigationIcon = DrawableUtils.getMipmap(context, template.header?.icon)
+    }
+    template.header?.background?.let {
+        toolbar.setBackgroundColor(Color.parseColor(template.header?.background))
+    }
+    template.header?.bodyBackgroud?.let {
+        viewGroup.setBackgroundColor(Color.parseColor(template.header?.bodyBackgroud))
+    }
 
     template.body.let {
         for (card in template.body) {
@@ -45,6 +65,57 @@ fun Context.renderTemplate(viewGroup: ViewGroup, footerViewGroup: ViewGroup, tem
         }
     }
     return template
+}
+
+fun Context.resetMenu(template: Template?, toolbar: Toolbar?, cb: (id: Int, data: String) -> Unit): android.view.Menu {
+    toolbar?.inflateMenu(R.menu.empty)
+    var menu = toolbar?.menu
+    template?.header?.menus?.let {
+        menu?.clear()
+        for (i in 0..template?.header!!.menus.size - 1) {
+            var m = template?.header!!.menus[i]
+            if (m.type.equals(kratos.card.render.Menu.SEARCH)) {
+                var item: MenuItem = menu!!.add(0, m.id, 0, "")
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM or MenuItem.SHOW_AS_ACTION_WITH_TEXT)
+                var searchView: SearchView = SearchView(this)
+                m.style?.let {
+                    if ((m.style as SearchStyle).expand) {
+                        val searchEditView = searchView.findViewById(R.id.search_src_text) as EditText
+                        try {
+                            val mCursorDrawableRes = TextView::class.java.getDeclaredField("mCursorDrawableRes")
+                            mCursorDrawableRes.isAccessible = true
+                            mCursorDrawableRes.set(searchEditView, 0) //This sets the cursor resource ID to 0 or @null which will make it visible on white background
+                        } catch (e: Exception) {
+                        }
+                        searchView.isSubmitButtonEnabled = false
+                        searchView.isIconified = false
+                        searchView.queryHint = m.hint ?: ""
+                    }
+                }
+                item.setActionView(searchView)
+
+
+                searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String): Boolean {
+                        return false
+                    }
+
+                    override fun onQueryTextChange(newText: String): Boolean {
+                        cb(m.id, newText)
+                        return true
+                    }
+                })
+            } else if (m.type.equals(kratos.card.render.Menu.TEXT)) {
+                var item: MenuItem = menu!!.add(0, m.id, 0, "")
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM or MenuItem.SHOW_AS_ACTION_WITH_TEXT)
+                item.setOnMenuItemClickListener {
+                    cb(m.id, "")
+                    true
+                }
+            }
+        }
+    }
+    return menu as android.view.Menu
 }
 
 fun Context.toTemplate(template: String): Template? {

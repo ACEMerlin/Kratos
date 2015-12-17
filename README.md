@@ -76,6 +76,8 @@ For example, the following activity is generated from [`sample.json`][4] file.
 
 You can easily handle click event by override `onEventMainThread` method.
 
+Notice that Kratos uses toolbar by default, so you need a `NoActionBar` theme in your style file, or you can just use `KratosTheme`.
+
 #### What's the benefit
 
 * No more fear of the changing requirements. Since activities are generated from json file, you can manipulate the layout on the fly(imagine put the json file on a server, like htmt on website).
@@ -95,6 +97,7 @@ Kratos is available from maven central:
 ```groovy
 apply plugin: 'com.neenbedankt.android-apt'
 buildscript {
+    ext.kratos_version = '0.1.1'
     repositories {
         mavenCentral()
     }
@@ -104,8 +107,8 @@ buildscript {
 }
 
 dependencies {
-    compile 'com.github.acemerlin:kratos:0.1'
-    apt 'com.github.acemerlin:kratos-compiler:0.1'
+    compile 'com.github.acemerlin:kratos:$kratos_version'
+    apt 'com.github.acemerlin:kratos-compiler:$kratos_version'
 }
 ```
 

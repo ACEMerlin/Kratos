@@ -2,6 +2,8 @@ package kratos.card
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
+import android.view.Menu
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import de.greenrobot.event.EventBus
@@ -10,6 +12,7 @@ import kratos.card.entity.KData
 import kratos.card.event.KMenuClickEvent
 import kratos.card.event.KOnClickEvent
 import kratos.card.render.Template
+import kratos.card.utils.FixSwipeRefreshLayout
 import kratos.card.utils.GsonUtils
 import kratos.card.utils.OnCardRenderListener
 import org.json.JSONObject
@@ -21,7 +24,9 @@ open class KCardActivity : AppCompatActivity() {
 
     var mainLayout: LinearLayout? = null
     var footerLayout: RelativeLayout? = null
+    var toolbar: Toolbar? = null
     var template: Template? = null
+    var swipeLayout: FixSwipeRefreshLayout? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,18 +34,36 @@ open class KCardActivity : AppCompatActivity() {
         setContentView(R.layout.kcard_main)
         mainLayout = findViewById(R.id.kcard_main_content) as LinearLayout
         footerLayout = findViewById(R.id.kcard_main_footer) as RelativeLayout
+        toolbar = findViewById(R.id.a_toolbar) as Toolbar
+        swipeLayout = findViewById(R.id.kcard_main_swipe_refresh_layout) as FixSwipeRefreshLayout
+        swipeLayout!!.setOnRefreshListener {
+            refresh()
+            swipeLayout!!.isRefreshing = false
+        }
         EventBus.getDefault().register(this)
+        setSupportActionBar(toolbar)
         onCreated()
         render()
     }
 
     fun render() {
-        render(mainLayout as LinearLayout, footerLayout as RelativeLayout, { template ->
+        render(mainLayout as LinearLayout, footerLayout as RelativeLayout, toolbar as Toolbar, { template ->
             this.template = template
             invalidateOptionsMenu()
             onFinishRender()
             refresh()
         })
+    }
+
+    public fun disableRefresh() {
+        swipeLayout!!.isEnabled = false
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        resetMenu(template, toolbar, { id, text ->
+            EventBus.getDefault().post(KMenuClickEvent(id, text, ""))
+        })
+        return super.onPrepareOptionsMenu(menu)
     }
 
     open public fun refresh() {

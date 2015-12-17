@@ -4,24 +4,35 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
-    <RelativeLayout
-        android:id="@+id/kcard_main_footer"
+    <include
+        layout="@layout/inc_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" />
 
-        <ScrollView
-            android:scrollbars="none"
-            android:fillViewport="true"
+    <kratos.card.utils.FixSwipeRefreshLayout
+        android:id="@+id/kcard_main_swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffff">
+
+        <RelativeLayout
+            android:id="@+id/kcard_main_footer"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/kcard_main_content"
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical" />
-        </ScrollView>
+                android:fillViewport="true"
+                android:scrollbars="none">
 
-    </RelativeLayout>
+                <LinearLayout
+                    android:id="@+id/kcard_main_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" />
+            </ScrollView>
+
+        </RelativeLayout>
+    </kratos.card.utils.FixSwipeRefreshLayout>
 </LinearLayout>

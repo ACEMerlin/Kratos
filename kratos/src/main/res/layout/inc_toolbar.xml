@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/a_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FBFBFB"
+            android:minHeight="?attr/actionBarSize"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/KratosTheme.ActionBar"
+            app:titleTextAppearance="@style/KratosTheme.Toolbar.Title" />
+
+        <View
+            android:id="@+id/a_toolbar_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="0.3dp"
+            android:background="#DDDDDD" />
+    </LinearLayout>
+</merge>

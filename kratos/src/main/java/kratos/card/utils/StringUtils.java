@@ -12,7 +12,7 @@ public class StringUtils {
 
     public static String convertStreamToString(InputStream is) {
         /*
-		 * To convert the InputStream to String we use the
+         * To convert the InputStream to String we use the
 		 * BufferedReader.readLine() method. We iterate until the BufferedReader
 		 * return null which means there's no more data to read. Each line will
 		 * appended to a StringBuilder and returned as String.

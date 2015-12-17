@@ -18,6 +18,6 @@
         </activity>
 
         <activity android:name=".CardSampleActivity"
-            android:theme="@style/Theme.AppCompat"/>
+            android:theme="@style/KratosTheme"/>
     </application>
 </manifest>
