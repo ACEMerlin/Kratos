@@ -230,7 +230,7 @@ Kratos is available from maven central:
 ```groovy
 apply plugin: 'com.neenbedankt.android-apt'
 buildscript {
-    ext.kratos_version = '0.1.1'
+    ext.kratos_version = '0.1.2'
     repositories {
         mavenCentral()
     }
