@@ -148,7 +148,7 @@ fun Context.toTemplate(template: String): Template? {
                 Log.d("KCARD.jsonobject", jsonObject.toString())
                 var jsonString = jsonObject.toString()
                 jsonString = onCardRenderListener.onRender(jsonString)
-                var clazz = Class.forName("kratos.card." + jsonObject.get("type"))
+                var clazz = Class.forName(jsonObject.get("type").toString())
                 t.body.add(GsonUtils.getGson(this, clazz).fromJson<KCard<KData>>(jsonString, clazz))
             }
         }
@@ -159,7 +159,7 @@ fun Context.toTemplate(template: String): Template? {
                 Log.d("KCARD.jsonobject", jsonObjectParentList.toString())
                 var jsonString = jsonObject.toString()
                 jsonString = onCardRenderListener.onRender(jsonString)
-                var clazz = Class.forName("kratos.card." + jsonObject.get("type"))
+                var clazz = Class.forName(jsonObject.get("type").toString())
                 t.footer.add(GsonUtils.getGson(this, clazz).fromJson<KCard<KData>>(jsonString, clazz))
             }
         }

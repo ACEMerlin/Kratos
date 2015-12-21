@@ -41,9 +41,9 @@ open class KCardActivity : AppCompatActivity() {
             swipeLayout!!.isRefreshing = false
         }
         EventBus.getDefault().register(this)
-        setSupportActionBar(toolbar)
         onCreated()
         render()
+        setSupportActionBar(toolbar)
     }
 
     fun render() {

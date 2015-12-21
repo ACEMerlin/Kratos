@@ -1,12 +1,12 @@
-package kratos.card;
+package me.ele.kratos_sample;
 
 import android.content.Context;
 
 import kratos.BindText;
 import kratos.Kratos;
+import kratos.card.KCard;
 import kratos.card.utils.Skip;
 import kratos.internal.KString;
-import me.ele.kratos_sample.R;
 import me.ele.kratos_sample.entity.KText;
 
 /**
