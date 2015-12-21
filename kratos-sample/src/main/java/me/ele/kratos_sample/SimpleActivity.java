@@ -6,6 +6,7 @@ import android.view.View;
 
 import kratos.BindText;
 import kratos.Kratos;
+import kratos.PackageName;
 import kratos.card.utils.ActivityUtils;
 import kratos.internal.KString;
 

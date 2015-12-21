@@ -47,7 +47,7 @@ public final class Kratos {
     }
 
     @NonNull
-    private static KBinder<Object> findKBinderForClass(Class<?> cls)
+    private static KBinder<Object>findKBinderForClass(Class<?> cls)
             throws IllegalAccessException, InstantiationException {
         KBinder<Object> kBinder = BINDERS.get(cls);
         if (kBinder != null) {

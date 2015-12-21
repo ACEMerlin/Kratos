@@ -22,6 +22,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
@@ -32,7 +33,9 @@ import javax.lang.model.util.Types;
 
 import kratos.BindLayout;
 import kratos.BindText;
-import kratos.KBindText;
+import kratos.LBindLayout;
+import kratos.LBindText;
+import kratos.PackageName;
 
 import static javax.lang.model.SourceVersion.latestSupported;
 import static javax.tools.Diagnostic.Kind.ERROR;
@@ -46,15 +49,16 @@ public class KratosProcessor extends AbstractProcessor {
     private static final String BINDING_CLASS_SUFFIX = "$$KBinder";
     private static final String NULLABLE_ANNOTATION_NAME = "Nullable";
     static final String VIEW_TYPE = "android.view.View";
-
+    private static String packageName = null;
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> types = new LinkedHashSet<>();
         //支持的annotation类型
         types.add(BindText.class.getCanonicalName());
-        types.add(KBindText.class.getCanonicalName());
+        types.add(LBindText.class.getCanonicalName());
         types.add(BindLayout.class.getCanonicalName());
+        types.add(LBindLayout.class.getCanonicalName());
         return types;
     }
 
@@ -95,12 +99,30 @@ public class KratosProcessor extends AbstractProcessor {
         Set<String> erasedTargetNames = new LinkedHashSet<>();
 
         // Process each @Bind element.
+        for (Element element : env.getElementsAnnotatedWith(PackageName.class)) {
+            if (!SuperficialValidation.validateElement(element)) continue;
+            try {
+                parsePackageName(element, targetClassMap, erasedTargetNames);
+            } catch (Exception e) {
+                logParsingError(element, PackageName.class, e);
+            }
+        }
+
         for (Element element : env.getElementsAnnotatedWith(BindLayout.class)) {
             if (!SuperficialValidation.validateElement(element)) continue;
             try {
                 parseBindLayout(element, targetClassMap, erasedTargetNames);
             } catch (Exception e) {
                 logParsingError(element, BindLayout.class, e);
+            }
+        }
+
+        for (Element element : env.getElementsAnnotatedWith(LBindLayout.class)) {
+            if (!SuperficialValidation.validateElement(element)) continue;
+            try {
+                parseLBindLayout(element, targetClassMap, erasedTargetNames);
+            } catch (Exception e) {
+                logParsingError(element, LBindLayout.class, e);
             }
         }
 
@@ -113,12 +135,12 @@ public class KratosProcessor extends AbstractProcessor {
             }
         }
 
-        for (Element element : env.getElementsAnnotatedWith(KBindText.class)) {
+        for (Element element : env.getElementsAnnotatedWith(LBindText.class)) {
             if (!SuperficialValidation.validateElement(element)) continue;
             try {
-                parseBindString(element, targetClassMap, erasedTargetNames);
+                parseLBindText(element, targetClassMap, erasedTargetNames);
             } catch (Exception e) {
-                logParsingError(element, KBindText.class, e);
+                logParsingError(element, LBindText.class, e);
             }
         }
 
@@ -133,15 +155,27 @@ public class KratosProcessor extends AbstractProcessor {
         return targetClassMap;
     }
 
+    private void parsePackageName(Element element, Map<TypeElement, BindingClass> targetClassMap,
+                                  Set<String> erasedTargetNames) {
+        packageName = ((PackageElement) element).getQualifiedName().toString();
+    }
+
     private void parseBindLayout(Element element, Map<TypeElement, BindingClass> targetClassMap,
                                  Set<String> erasedTargetNames) {
         int id = element.getAnnotation(BindLayout.class).value();
-        BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, (TypeElement) element, false);
+        BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, (TypeElement) element, false, false);
+        bindingClass.setLayoutId(String.valueOf(id));
+    }
+
+    private void parseLBindLayout(Element element, Map<TypeElement, BindingClass> targetClassMap,
+                                  Set<String> erasedTargetNames) {
+        String id = element.getAnnotation(LBindLayout.class).value();
+        BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, (TypeElement) element, true, false);
         bindingClass.setLayoutId(id);
     }
 
-    private void parseBindString(Element element, Map<TypeElement, BindingClass> targetClassMap,
-                                 Set<String> erasedTargetNames) {
+    private void parseLBindText(Element element, Map<TypeElement, BindingClass> targetClassMap,
+                                Set<String> erasedTargetNames) {
         TypeElement enclosingElement = (TypeElement) element.getEnclosingElement();
 
         TypeMirror elementType = element.asType();
@@ -150,23 +184,23 @@ public class KratosProcessor extends AbstractProcessor {
             elementType = typeVariable.getUpperBound();
         }
         // Assemble information on the field.
-        String[] ids = element.getAnnotation(KBindText.class).value();
-        BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement, true);
+        String[] ids = element.getAnnotation(LBindText.class).value();
+        BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement, true, false);
         for (String id : ids) {
             if (bindingClass != null) {
-                KBindings bindings = bindingClass.getKBindings(String.valueOf(id));
+                KBindings bindings = bindingClass.getKBindings(id);
                 if (bindings != null) {
                     Iterator<FieldViewBinding> iterator = bindings.getFieldBindings().iterator();
                     if (iterator.hasNext()) {
                         FieldViewBinding existingBinding = iterator.next();
                         error(element, "Attempt to use @%s for an already bound ID %s on '%s'. (%s.%s)",
-                                KBindText.class.getSimpleName(), id, existingBinding.getName(),
+                                LBindText.class.getSimpleName(), id, existingBinding.getName(),
                                 enclosingElement.getQualifiedName(), element.getSimpleName());
                         return;
                     }
                 }
             } else {
-                bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement, true);
+                bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement, true, false);
             }
             String name = element.getSimpleName().toString();
             TypeName type = TypeName.get(elementType);
@@ -191,7 +225,7 @@ public class KratosProcessor extends AbstractProcessor {
         }
         // Assemble information on the field.
         int[] ids = element.getAnnotation(BindText.class).value();
-        BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement, false);
+        BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement, false, false);
         for (int id : ids) {
             if (bindingClass != null) {
                 KBindings bindings = bindingClass.getKBindings(String.valueOf(id));
@@ -206,7 +240,7 @@ public class KratosProcessor extends AbstractProcessor {
                     }
                 }
             } else {
-                bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement, false);
+                bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement, false, false);
             }
             String name = element.getSimpleName().toString();
             TypeName type = TypeName.get(elementType);
@@ -250,14 +284,13 @@ public class KratosProcessor extends AbstractProcessor {
     }
 
     private BindingClass getOrCreateTargetClass(Map<TypeElement, BindingClass> targetClassMap,
-                                                TypeElement enclosingElement, Boolean isKotlin) {
+                                                TypeElement enclosingElement, Boolean isLibrary, Boolean isKotlin) {
         BindingClass bindingClass = targetClassMap.get(enclosingElement);
         if (bindingClass == null) {
             String targetType = enclosingElement.getQualifiedName().toString();
             String classPackage = getPackageName(enclosingElement);
             String className = getClassName(enclosingElement, classPackage) + BINDING_CLASS_SUFFIX;
-            String[] name = classPackage.split("\\.");
-            bindingClass = new BindingClass(classPackage, className, targetType, name[0], isKotlin);
+            bindingClass = new BindingClass(classPackage, className, targetType, packageName, isLibrary, isKotlin);
             targetClassMap.put(enclosingElement, bindingClass);
         }
         return bindingClass;

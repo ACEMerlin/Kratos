@@ -28,20 +28,22 @@ public class BindingClass {
     private static final ClassName KBINDER = ClassName.get("kratos.internal", "KBinder");
     private static final ClassName KFINDER = ClassName.get("kratos.internal", "KFinder");
     static final int NO_ID = -1;
+    private final boolean isLibrary;
     private final boolean isKotlin;
 
     private final Map<String, KBindings> viewIdMap = new LinkedHashMap<>();
-    private int layoutId = 0;
+    private String layoutId;
 
-    public void setLayoutId(int layoutId) {
+    public void setLayoutId(String layoutId) {
         this.layoutId = layoutId;
     }
 
-    BindingClass(String classPackage, String className, String targetClass, String resPackage, Boolean isKotlin) {
+    BindingClass(String classPackage, String className, String targetClass, String resPackage, Boolean isLibrary, Boolean isKotlin) {
         this.classPackage = classPackage;
         this.className = className;
         this.targetClass = targetClass;
         this.resClass = ClassName.get(resPackage, "R");
+        this.isLibrary = isLibrary;
         this.isKotlin = isKotlin;
     }
 
@@ -77,8 +79,11 @@ public class BindingClass {
         if (parentViewBinder != null) {
             result.addStatement("super.bind(target, finder)");
         }
-        if (layoutId != 0) {
-            result.addStatement("target.setLayoutId($L)", layoutId);
+        if (layoutId != null) {
+            if (!isLibrary)
+                result.addStatement("target.setLayoutId($L)", Integer.parseInt(layoutId));
+            else
+                result.addStatement("target.setLayoutId($T.layout.$L)", resClass, layoutId);
         }
         if (!viewIdMap.isEmpty()) {
             result.addStatement("$T view", ClassName.get("android.view", "View"));
@@ -89,34 +94,9 @@ public class BindingClass {
         }
         return result.build();
     }
-
-    public static boolean isInteger(String str) {
-        if (str == null) {
-            return false;
-        }
-        int length = str.length();
-        if (length == 0) {
-            return false;
-        }
-        int i = 0;
-        if (str.charAt(0) == '-') {
-            if (length == 1) {
-                return false;
-            }
-            i = 1;
-        }
-        for (; i < length; i++) {
-            char c = str.charAt(i);
-            if (c < '0' || c > '9') {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private void addKBindings(MethodSpec.Builder result, KBindings bindings) {
         List<KBinding> requiredViewBindings = bindings.getRequiredBindings();
-        if (isInteger(bindings.getId())) {
+        if (!isLibrary) {
             if (requiredViewBindings.isEmpty()) {
                 result.addStatement("view = finder.findOptionalView(target, $L)", bindings.getId());
             } else {

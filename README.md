@@ -51,7 +51,7 @@ KString boundData = new KString(new KString.Update() {
 If you are using Kotlin, the code is more simple:
 
 ```java
-@BindString("some_edittext_id")
+@KBindText("some_edittext_id")
 public var boundData = KString {
     it, new ->
     it as EditText
@@ -76,7 +76,10 @@ For example, the following activity is generated from [`sample.json`][4] file.
 
 You can easily handle click event by override `onEventMainThread` method.
 
-Notice that Kratos uses toolbar by default, so you need a `NoActionBar` theme in your style file, or you can just use `KratosTheme`.
+#### Notice that
+
+* Kratos uses toolbar by default, so you need a `NoActionBar` theme in your style file, or you can just use `KratosTheme`.
+* When you run into non-final id problem in your library project, just use annotation start with "L", for example `LBindText`. But remember that you should never use both kind of annotation in the same file!
 
 #### What's the benefit
 
@@ -87,6 +90,136 @@ Notice that Kratos uses toolbar by default, so you need a `NoActionBar` theme in
 ![ComplexCard](images/complexcard.png)
 
 For more code see kratos-sample.
+
+How To
+-----------------
+
+### Create custom card
+
+To Create a TextView like card:
+
+1. Create a class that extends KData, for example:
+
+   ```java
+   public class KText extends KData {
+       public String text;
+   }
+   ```
+2. Create a class that extends KCard, use KData as its Generic, for example:
+
+   ```java
+   @BindLayout(R.layout.kcard_text)
+   public class TextCard extends KCard<KText> {
+       @Skip
+       @BindText(R.id.kcard_text_text)
+       public KString _text = new KString();
+
+       public TextCard(Context context) {
+           super(context);
+           Kratos.bind(this);
+           setOnLinkListener();
+       }
+
+       @Override
+       public void refresh() {
+           if (getData() != null)
+               _text.setData(getData().text);
+       }
+   }
+   ```
+   Notice that it uses `BindLayout` to specify its layout:
+   
+   ```xml
+   <?xml version="1.0" encoding="utf-8"?>
+   <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:background="#ffffff"
+       android:gravity="center_horizontal"
+       android:orientation="vertical"
+       android:padding="16dp">
+
+       <TextView
+           android:id="@+id/kcard_text_text"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:gravity="center"
+           android:textColor="#888888"
+           android:textSize="14sp" />
+   </LinearLayout>
+   ```
+   
+3. Create a Activity that extends KCardActivity:
+   
+	```java
+	public class CardSampleActivity extends KCardActivity {
+	
+	    private void showToast(String text) {
+	        Toast.makeText(CardSampleActivity.this, text, Toast.LENGTH_SHORT).show();
+	    }
+	
+	    @Override
+	    public void onEventMainThread(@NotNull KOnClickEvent<KData> event) {
+	        super.onEventMainThread(event);
+	        switch (event.id) {
+	            case "textCard1":
+	                showToast("Handle click on textCard1!");
+	                break;
+	            case "textCard2":
+	                showToast("Handle click on textCard2!");
+	                break;
+	            case "textCard3":
+	                showToast("Handle click on textCard3!");
+	                break;
+	            case "textCard4":
+	                showToast("Handle click on textCard4!");
+	                break;
+	            case "textCard5":
+	                showToast("Handle click on textCard5!");
+	                break;
+	        }
+	    }
+	}
+	```
+	Notice that it handles click event by overriding o`nEventMainThread` method.
+
+4. Pass your json layout to your activity:
+   
+	```json
+	{
+	  "header": {
+	    "title": "Card Sample"
+	  },
+	  "body": [
+	    {
+	      "data": {
+	        "text": "init data1"
+	      },
+	      "type": "me.ele.kratos_sample.TextCard",
+	      "id": "textCard1",
+	      "style": {
+	        "margin_top": 20,
+	        "margin_left": 20,
+	        "margin_right": 20
+	      }
+	    }
+	  ]
+	}  
+	```
+	Notice that it uses full package name in `type` property.
+	
+	You can use kratos' util function to pass json file to your next activity:
+	
+	```
+	ActivityUtils.jump(SimpleActivity.this, CardSampleActivity.class, CODE_CARD_SAMPLE, R.raw.sample);
+
+	```
+	
+5. Create a package-info.java file in your source folder.
+
+You will get something like this:
+
+![Deme](images/demo.png)
 
 Download
 -----------------
@@ -114,7 +247,7 @@ dependencies {
 
 How It Works
 ----------------
-* Use Kotlin's [Observable Delegate][1] to listen to changes made to certian property.
+* Use Kotlin's [Observable Delegate][1] to listen to changes made to certain property.
 * Use Kotlin's [Extension][2] feature to add functions to View.
 * Use Annotation Processor to generate code which binds the data and the view(or views).
 
