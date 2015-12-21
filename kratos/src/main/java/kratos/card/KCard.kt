@@ -1,7 +1,6 @@
 package kratos.card
 
 import android.content.Context
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import de.greenrobot.event.EventBus
@@ -10,9 +9,8 @@ import kratos.card.event.KOnClickEvent
 import kratos.card.render.Style
 import kratos.card.utils.Skip
 
-open class KCard<T : KData>() {
+open class KCard<T : KData>(@Skip val context: Context) {
 
-    var view: String? = null
     var id: String? = null
     var data: T? = null
     var url: String? = null
@@ -20,15 +18,7 @@ open class KCard<T : KData>() {
     @Skip
     var rootView: View? = null
     @Skip
-    var context: Context? = null
-
-    constructor(context: Context) : this() {
-        this.context = context
-        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        if ( getResourceLayoutId() != 0) {
-            rootView = inflater.inflate(getResourceLayoutId(), null)
-        }
-    }
+    var layoutId = 0
 
     protected fun setOnLinkListener() {
         rootView?.setOnClickListener { onLink() }
@@ -56,7 +46,6 @@ open class KCard<T : KData>() {
         return params
     }
 
-
     public open fun refresh() {
     }
 
@@ -67,17 +56,4 @@ open class KCard<T : KData>() {
     protected fun onLink(position: Int) {
         EventBus.getDefault().post(KOnClickEvent(id, data, url, position))
     }
-
-    fun findViewById(id: Int): View? {
-        return rootView?.findViewById(id)
-    }
-
-    open fun getResourceLayoutId(): Int {
-        return 0
-    }
-
-    open public fun getValue(): String {
-        return ""
-    }
-
 }

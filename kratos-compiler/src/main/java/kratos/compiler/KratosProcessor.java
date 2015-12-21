@@ -30,12 +30,12 @@ import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import kratos.BindString;
+import kratos.BindLayout;
 import kratos.BindText;
+import kratos.KBindText;
 
 import static javax.lang.model.SourceVersion.latestSupported;
 import static javax.tools.Diagnostic.Kind.ERROR;
-import static javax.tools.Diagnostic.Kind.NOTE;
 
 @AutoService(Processor.class)
 public class KratosProcessor extends AbstractProcessor {
@@ -53,7 +53,8 @@ public class KratosProcessor extends AbstractProcessor {
         Set<String> types = new LinkedHashSet<>();
         //支持的annotation类型
         types.add(BindText.class.getCanonicalName());
-        types.add(BindString.class.getCanonicalName());
+        types.add(KBindText.class.getCanonicalName());
+        types.add(BindLayout.class.getCanonicalName());
         return types;
     }
 
@@ -94,6 +95,15 @@ public class KratosProcessor extends AbstractProcessor {
         Set<String> erasedTargetNames = new LinkedHashSet<>();
 
         // Process each @Bind element.
+        for (Element element : env.getElementsAnnotatedWith(BindLayout.class)) {
+            if (!SuperficialValidation.validateElement(element)) continue;
+            try {
+                parseBindLayout(element, targetClassMap, erasedTargetNames);
+            } catch (Exception e) {
+                logParsingError(element, BindLayout.class, e);
+            }
+        }
+
         for (Element element : env.getElementsAnnotatedWith(BindText.class)) {
             if (!SuperficialValidation.validateElement(element)) continue;
             try {
@@ -103,13 +113,12 @@ public class KratosProcessor extends AbstractProcessor {
             }
         }
 
-        for (Element element : env.getElementsAnnotatedWith(BindString.class)) {
-            processingEnv.getMessager().printMessage(NOTE, "shit!!!!!");
+        for (Element element : env.getElementsAnnotatedWith(KBindText.class)) {
             if (!SuperficialValidation.validateElement(element)) continue;
             try {
                 parseBindString(element, targetClassMap, erasedTargetNames);
             } catch (Exception e) {
-                logParsingError(element, BindString.class, e);
+                logParsingError(element, KBindText.class, e);
             }
         }
 
@@ -124,6 +133,13 @@ public class KratosProcessor extends AbstractProcessor {
         return targetClassMap;
     }
 
+    private void parseBindLayout(Element element, Map<TypeElement, BindingClass> targetClassMap,
+                                 Set<String> erasedTargetNames) {
+        int id = element.getAnnotation(BindLayout.class).value();
+        BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, (TypeElement) element, false);
+        bindingClass.setLayoutId(id);
+    }
+
     private void parseBindString(Element element, Map<TypeElement, BindingClass> targetClassMap,
                                  Set<String> erasedTargetNames) {
         TypeElement enclosingElement = (TypeElement) element.getEnclosingElement();
@@ -134,7 +150,7 @@ public class KratosProcessor extends AbstractProcessor {
             elementType = typeVariable.getUpperBound();
         }
         // Assemble information on the field.
-        String[] ids = element.getAnnotation(BindString.class).value();
+        String[] ids = element.getAnnotation(KBindText.class).value();
         BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement, true);
         for (String id : ids) {
             if (bindingClass != null) {
@@ -144,7 +160,7 @@ public class KratosProcessor extends AbstractProcessor {
                     if (iterator.hasNext()) {
                         FieldViewBinding existingBinding = iterator.next();
                         error(element, "Attempt to use @%s for an already bound ID %s on '%s'. (%s.%s)",
-                                BindString.class.getSimpleName(), id, existingBinding.getName(),
+                                KBindText.class.getSimpleName(), id, existingBinding.getName(),
                                 enclosingElement.getQualifiedName(), element.getSimpleName());
                         return;
                     }

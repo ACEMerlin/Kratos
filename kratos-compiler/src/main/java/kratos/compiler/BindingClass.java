@@ -31,6 +31,11 @@ public class BindingClass {
     private final boolean isKotlin;
 
     private final Map<String, KBindings> viewIdMap = new LinkedHashMap<>();
+    private int layoutId = 0;
+
+    public void setLayoutId(int layoutId) {
+        this.layoutId = layoutId;
+    }
 
     BindingClass(String classPackage, String className, String targetClass, String resPackage, Boolean isKotlin) {
         this.classPackage = classPackage;
@@ -71,6 +76,9 @@ public class BindingClass {
                 .addParameter(KFINDER, "finder", FINAL);
         if (parentViewBinder != null) {
             result.addStatement("super.bind(target, finder)");
+        }
+        if (layoutId != 0) {
+            result.addStatement("target.setLayoutId($L)", layoutId);
         }
         if (!viewIdMap.isEmpty()) {
             result.addStatement("$T view", ClassName.get("android.view", "View"));

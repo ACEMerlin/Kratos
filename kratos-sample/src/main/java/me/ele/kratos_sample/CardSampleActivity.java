@@ -38,9 +38,4 @@ public class CardSampleActivity extends KCardActivity {
                 break;
         }
     }
-
-    @Override
-    public void onCreated() {
-        getToolbar().setTitle("shit");
-    }
 }

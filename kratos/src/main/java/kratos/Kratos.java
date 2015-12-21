@@ -42,7 +42,7 @@ public final class Kratos {
             KBinder<Object> viewBinder = findKBinderForClass(targetClass);
             viewBinder.bind(target, finder);
         } catch (Exception e) {
-            throw new RuntimeException("Unable to bind views for " + targetClass.getName(), e);
+                throw new RuntimeException("Unable to bind views for " + targetClass.getName(), e);
         }
     }
 
