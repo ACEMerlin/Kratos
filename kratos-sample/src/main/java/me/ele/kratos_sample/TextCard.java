@@ -28,6 +28,6 @@ public class TextCard extends KCard<KText> {
     @Override
     public void refresh() {
         if (getData() != null)
-            _text.setData(getData().text);
+            _text.setData(getData().text.getData());
     }
 }

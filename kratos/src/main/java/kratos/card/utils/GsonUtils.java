@@ -7,6 +7,9 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import kratos.internal.KString;
+import kratos.internal.KStringDeserializer;
+
 /**
  * Created by sanvi on 9/28/15.
  */
@@ -53,6 +56,7 @@ public class GsonUtils {
         if (clazz != null && context != null) {
             gsonBuilder.registerTypeAdapter(clazz, new GsonUtilsCreator(context));
         }
+        gsonBuilder.registerTypeAdapter(KString.class, new KStringDeserializer());
         return gsonBuilder.setPrettyPrinting()
                 .disableHtmlEscaping().create();
 
