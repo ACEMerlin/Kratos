@@ -21,6 +21,7 @@ class KString() {
     var views = emptySet<View>()
     var fn: ((view: View, new: String) -> Unit)? = null
     var update: Update? = null
+    var initData: String? = null
 
     public constructor(fn: (view: View, new: String) -> Unit) : this() {
         this.fn = fn
@@ -30,9 +31,9 @@ class KString() {
         this.update = update
     }
 
-    public var data: String by Delegates.observable("") {
+    private var data: String by Delegates.observable("") {
         d, old, new ->
-        if (old != new) {
+        if ((old != new)) {
             for (view in views) {
                 Log.d("KString", "VIEW UPDATE!: ${view.resources.getResourceName(view.id)} FROM $old TO $new")
                 if (fn != null)
@@ -63,6 +64,14 @@ class KString() {
                 })
             }
         }
+    }
+
+    fun get(): String {
+        return data
+    }
+
+    fun set(new: String) {
+        data = new
     }
 }
 

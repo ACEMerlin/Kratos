@@ -17,7 +17,7 @@ public class KStringDeserializer implements JsonDeserializer<KString> {
     @Override
     public KString deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         KString field = new KString();
-        field.setData(json.getAsString());
+        field.setInitData(json.getAsString());
         return field;
     }
 }

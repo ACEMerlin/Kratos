@@ -31,8 +31,10 @@ import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
+import kratos.Bind;
 import kratos.BindLayout;
 import kratos.BindText;
+import kratos.Binds;
 import kratos.LBindLayout;
 import kratos.LBindText;
 import kratos.PackageName;
@@ -59,6 +61,8 @@ public class KratosProcessor extends AbstractProcessor {
         types.add(LBindText.class.getCanonicalName());
         types.add(BindLayout.class.getCanonicalName());
         types.add(LBindLayout.class.getCanonicalName());
+        types.add(Binds.class.getCanonicalName());
+        types.add(Bind.class.getCanonicalName());
         return types;
     }
 
@@ -108,6 +112,24 @@ public class KratosProcessor extends AbstractProcessor {
             }
         }
 
+        for (Element element : env.getElementsAnnotatedWith(Binds.class)) {
+            if (!SuperficialValidation.validateElement(element)) continue;
+            try {
+                parseBinds(element, targetClassMap, erasedTargetNames);
+            } catch (Exception e) {
+                logParsingError(element, Binds.class, e);
+            }
+        }
+
+        for (Element element : env.getElementsAnnotatedWith(Bind.class)) {
+            if (!SuperficialValidation.validateElement(element)) continue;
+            try {
+                parseBind(element, targetClassMap, erasedTargetNames);
+            } catch (Exception e) {
+                logParsingError(element, Bind.class, e);
+            }
+        }
+
         for (Element element : env.getElementsAnnotatedWith(BindLayout.class)) {
             if (!SuperficialValidation.validateElement(element)) continue;
             try {
@@ -153,6 +175,25 @@ public class KratosProcessor extends AbstractProcessor {
         }
 
         return targetClassMap;
+    }
+
+    private void parseBinds(Element element, Map<TypeElement, BindingClass> targetClassMap,
+                            Set<String> erasedTargetNames) {
+        Bind[] binds = element.getAnnotation(Binds.class).value();
+        for (Bind bind : binds) {
+            String data = bind.data();
+            int id = bind.id();
+            BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, (TypeElement) element, false, false);
+            bindingClass.addDoubleBinding(id, data);
+        }
+    }
+
+    private void parseBind(Element element, Map<TypeElement, BindingClass> targetClassMap,
+                           Set<String> erasedTargetNames) {
+        String data = element.getAnnotation(Bind.class).data();
+        int id = element.getAnnotation(Bind.class).id();
+        BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, (TypeElement) element, false, false);
+        bindingClass.addDoubleBinding(id, data);
     }
 
     private void parsePackageName(Element element, Map<TypeElement, BindingClass> targetClassMap,

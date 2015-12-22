@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.RelativeLayout
 import android.widget.TextView
+import kratos.Kratos
 import kratos.R
 import kratos.card.entity.KData
 import kratos.card.render.*
@@ -149,7 +150,10 @@ fun Context.toTemplate(template: String): Template? {
                 var jsonString = jsonObject.toString()
                 jsonString = onCardRenderListener.onRender(jsonString)
                 var clazz = Class.forName(jsonObject.get("type").toString())
-                t.body.add(GsonUtils.getGson(this, clazz).fromJson<KCard<KData>>(jsonString, clazz))
+                val card = GsonUtils.getGson(this, clazz).fromJson<KCard<KData>>(jsonString, clazz)
+                t.body.add(card)
+                Kratos.bind(card)
+                card.onRender()
             }
         }
         if (`object`.has("footer")) {

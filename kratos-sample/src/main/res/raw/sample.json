@@ -5,58 +5,11 @@
   "body": [
     {
       "data": {
-        "text": "init data1"
+        "text1": "this is text1",
+        "text2": "this is text2"
       },
       "type": "me.ele.kratos_sample.TextCard",
       "id": "textCard1",
-      "style": {
-        "margin_top": 20,
-        "margin_left": 20,
-        "margin_right": 20
-      }
-    },
-    {
-      "data": {
-        "text": "init data2"
-      },
-      "type": "me.ele.kratos_sample.TextCard",
-      "id": "textCard2",
-      "style": {
-        "margin_top": 20,
-        "margin_left": 20,
-        "margin_right": 20
-      }
-    },
-    {
-      "data": {
-        "text": "init data3"
-      },
-      "type": "me.ele.kratos_sample.TextCard",
-      "id": "textCard3",
-      "style": {
-        "margin_top": 20,
-        "margin_left": 20,
-        "margin_right": 20
-      }
-    },
-    {
-      "data": {
-        "text": "init data4"
-      },
-      "type": "me.ele.kratos_sample.TextCard",
-      "id": "textCard4",
-      "style": {
-        "margin_top": 20,
-        "margin_left": 20,
-        "margin_right": 20
-      }
-    },
-    {
-      "data": {
-        "text": "Each one of the view here is Card!\nThis page was generated from sample.json!"
-      },
-      "type": "me.ele.kratos_sample.TextCard",
-      "id": "textCard5",
       "style": {
         "margin_top": 20,
         "margin_left": 20,

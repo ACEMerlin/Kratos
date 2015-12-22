@@ -96,37 +96,34 @@ How To
 
 ### Create custom card
 
-To Create a TextView like card:
+To Create a card consists of two TextView that can also handle click even2
 
 1. Create a class that extends KData, for example:
 
    ```java
    public class KText extends KData {
-       public String text;
+       public KString text1;
+       public KString text2;
    }
    ```
 2. Create a class that extends KCard, use KData as its Generic, for example:
 
-   ```java
-   @BindLayout(R.layout.kcard_text)
-   public class TextCard extends KCard<KText> {
-       @Skip
-       @BindText(R.id.kcard_text_text)
-       public KString _text = new KString();
-
-       public TextCard(Context context) {
+	```java
+	@BindLayout(R.layout.kcard_text)  //@LBindLayout("kcard_text")
+	@Binds({@Bind(id = R.id.kcard_text_text1, data = "text1"),
+	        @Bind(id = R.id.kcard_text_text2, data = "text2")})
+	public class TextCard extends KCard<KText> {
+	    public TextCard(@NotNull Context context) {
            super(context);
-           Kratos.bind(this);
-           setOnLinkListener();
        }
 
        @Override
-       public void refresh() {
-           if (getData() != null)
-               _text.setData(getData().text);
+       public void onRender() {
+           setOnLinkListener();
        }
-   }
-   ```
+	}
+	```
+   
    Notice that it uses `BindLayout` to specify its layout:
    
    ```xml
@@ -140,7 +137,14 @@ To Create a TextView like card:
        android:padding="16dp">
 
        <TextView
-           android:id="@+id/kcard_text_text"
+           android:id="@+id/kcard_text_text1"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:gravity="center"
+           android:textColor="#888888"
+           android:textSize="14sp" />
+       <TextView
+           android:id="@+id/kcard_text_text2"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:gravity="center"
@@ -165,18 +169,6 @@ To Create a TextView like card:
 	            case "textCard1":
 	                showToast("Handle click on textCard1!");
 	                break;
-	            case "textCard2":
-	                showToast("Handle click on textCard2!");
-	                break;
-	            case "textCard3":
-	                showToast("Handle click on textCard3!");
-	                break;
-	            case "textCard4":
-	                showToast("Handle click on textCard4!");
-	                break;
-	            case "textCard5":
-	                showToast("Handle click on textCard5!");
-	                break;
 	        }
 	    }
 	}
@@ -193,7 +185,8 @@ To Create a TextView like card:
 	  "body": [
 	    {
 	      "data": {
-	        "text": "init data1"
+	        "text": "this is text1",
+	        "text": "this is text2"
 	      },
 	      "type": "me.ele.kratos_sample.TextCard",
 	      "id": "textCard1",
@@ -230,7 +223,7 @@ Kratos is available from maven central:
 ```groovy
 apply plugin: 'com.neenbedankt.android-apt'
 buildscript {
-    ext.kratos_version = '0.1.2'
+    ext.kratos_version = '0.2.0'
     repositories {
         mavenCentral()
     }

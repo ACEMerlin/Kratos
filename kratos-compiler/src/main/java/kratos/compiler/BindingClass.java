@@ -92,8 +92,23 @@ public class BindingClass {
                 addKBindings(result, bindings);
             }
         }
+        if (!doubleBindingMap.isEmpty()) {
+            if (viewIdMap.isEmpty()) {
+                result.addStatement("$T view", ClassName.get("android.view", "View"));
+            }
+            for (Map.Entry<Integer, String> entry : doubleBindingMap.entrySet()) {
+                addDoubleBindings(result, entry);
+            }
+         }
         return result.build();
     }
+
+    private void addDoubleBindings(MethodSpec.Builder result, Map.Entry<Integer, String> entry) {
+        result.addStatement("view = finder.findRequiredView(target, $L)", entry.getKey());
+        result.addStatement("target.getData().$L.bind(view)", entry.getValue());
+        result.addStatement("target.getData().$L.set(target.getData().$L.getInitData())", entry.getValue(), entry.getValue());
+    }
+
     private void addKBindings(MethodSpec.Builder result, KBindings bindings) {
         List<KBinding> requiredViewBindings = bindings.getRequiredBindings();
         if (!isLibrary) {
@@ -153,5 +168,15 @@ public class BindingClass {
             viewIdMap.put(id, viewId);
         }
         return viewId;
+    }
+
+    private Map<Integer, String> doubleBindingMap = new LinkedHashMap<>();
+
+    public void addDoubleBinding(int id, String data) {
+        String mData = doubleBindingMap.get(id);
+        if (mData == null) {
+            mData = data;
+            doubleBindingMap.put(id, data);
+        }
     }
 }

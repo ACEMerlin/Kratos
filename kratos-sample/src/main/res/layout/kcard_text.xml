@@ -8,7 +8,15 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/kcard_text_text"
+        android:id="@+id/kcard_text_text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#888888"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/kcard_text_text2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"

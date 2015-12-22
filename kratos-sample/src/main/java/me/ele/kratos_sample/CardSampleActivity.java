@@ -24,18 +24,6 @@ public class CardSampleActivity extends KCardActivity {
             case "textCard1":
                 showToast("Handle click on textCard1!");
                 break;
-            case "textCard2":
-                showToast("Handle click on textCard2!");
-                break;
-            case "textCard3":
-                showToast("Handle click on textCard3!");
-                break;
-            case "textCard4":
-                showToast("Handle click on textCard4!");
-                break;
-            case "textCard5":
-                showToast("Handle click on textCard5!");
-                break;
         }
     }
 }

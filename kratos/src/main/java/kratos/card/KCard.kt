@@ -56,4 +56,6 @@ open class KCard<T : KData>(@Skip val context: Context) {
     protected fun onLink(position: Int) {
         EventBus.getDefault().post(KOnClickEvent(id, data, url, position))
     }
+
+    public open fun onRender() {}
 }
