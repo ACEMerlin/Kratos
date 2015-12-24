@@ -153,7 +153,6 @@ fun Context.toTemplate(template: String): Template? {
                 val card = GsonUtils.getGson(this, clazz).fromJson<KCard<KData>>(jsonString, clazz)
                 t.body.add(card)
                 Kratos.bind(card)
-                card.onRender()
             }
         }
         if (`object`.has("footer")) {

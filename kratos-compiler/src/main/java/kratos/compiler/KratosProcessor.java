@@ -13,6 +13,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
@@ -37,6 +39,7 @@ import kratos.BindText;
 import kratos.Binds;
 import kratos.LBindLayout;
 import kratos.LBindText;
+import kratos.OnKStringChanged;
 import kratos.PackageName;
 
 import static javax.lang.model.SourceVersion.latestSupported;
@@ -63,6 +66,7 @@ public class KratosProcessor extends AbstractProcessor {
         types.add(LBindLayout.class.getCanonicalName());
         types.add(Binds.class.getCanonicalName());
         types.add(Bind.class.getCanonicalName());
+        types.add(OnKStringChanged.class.getCanonicalName());
         return types;
     }
 
@@ -148,6 +152,15 @@ public class KratosProcessor extends AbstractProcessor {
             }
         }
 
+        for (Element element : env.getElementsAnnotatedWith(OnKStringChanged.class)) {
+            if (!SuperficialValidation.validateElement(element)) continue;
+            try {
+                parseOnKStringUpdate(element, targetClassMap, erasedTargetNames);
+            } catch (Exception e) {
+                logParsingError(element, OnKStringChanged.class, e);
+            }
+        }
+
         for (Element element : env.getElementsAnnotatedWith(BindText.class)) {
             if (!SuperficialValidation.validateElement(element)) continue;
             try {
@@ -175,6 +188,25 @@ public class KratosProcessor extends AbstractProcessor {
         }
 
         return targetClassMap;
+    }
+
+    private void parseOnKStringUpdate(Element element, Map<TypeElement, BindingClass> targetClassMap,
+                                      Set<String> erasedTargetNames) {
+        TypeElement enclosingElement = (TypeElement) element.getEnclosingElement();
+        BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement, false, false);
+        TypeMirror mirror = element.asType();
+        if (!(mirror.getKind() == TypeKind.EXECUTABLE))
+            return;
+        String method = element.toString().trim();
+        String methodName = method.substring(0, method.indexOf("("));
+        Matcher m = Pattern.compile("\\(([^)]+)\\)").matcher(method);
+        if (m.find()) {
+            String[] methodTypes = m.group(1).split(",");
+            UpdateKStringBinding binding = new UpdateKStringBinding(methodName, methodTypes);
+            String kstring = element.getAnnotation(OnKStringChanged.class).value();
+            bindingClass.addKStringUpdateBinding(kstring, binding);
+        }
+        erasedTargetNames.add(enclosingElement.toString());
     }
 
     private void parseBinds(Element element, Map<TypeElement, BindingClass> targetClassMap,

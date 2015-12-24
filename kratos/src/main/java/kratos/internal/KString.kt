@@ -14,32 +14,24 @@ import kotlin.properties.Delegates
  */
 class KString() {
 
-    interface Update {
+    interface OnUpdateListener {
         fun update(view: View, new: String)
     }
 
-    var views = emptySet<View>()
-    var fn: ((view: View, new: String) -> Unit)? = null
-    var update: Update? = null
+    private var views = emptySet<View>()
+    var updateFn: ((view: View, new: String) -> Unit)? = null
+    var onUpdateListener: OnUpdateListener? = null
     var initData: String? = null
-
-    public constructor(fn: (view: View, new: String) -> Unit) : this() {
-        this.fn = fn
-    }
-
-    public constructor(update: KString.Update) : this() {
-        this.update = update
-    }
 
     private var data: String by Delegates.observable("") {
         d, old, new ->
         if ((old != new)) {
             for (view in views) {
                 Log.d("KString", "VIEW UPDATE!: ${view.resources.getResourceName(view.id)} FROM $old TO $new")
-                if (fn != null)
-                    fn!!(view, new)
-                else if (update != null)
-                    update!!.update(view, new)
+                if (updateFn != null)
+                    updateFn!!(view, new)
+                else if (onUpdateListener != null)
+                    onUpdateListener!!.update(view, new)
                 else
                     view.updateText(new)
             }

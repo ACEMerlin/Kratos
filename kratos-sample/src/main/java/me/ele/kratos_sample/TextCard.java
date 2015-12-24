@@ -1,10 +1,15 @@
 package me.ele.kratos_sample;
 
 import android.content.Context;
+import android.util.Log;
+import android.widget.TextView;
+
+import org.jetbrains.annotations.NotNull;
 
 import kratos.Bind;
 import kratos.BindLayout;
 import kratos.Binds;
+import kratos.OnKStringChanged;
 import kratos.card.KCard;
 import me.ele.kratos_sample.entity.KText;
 
@@ -20,7 +25,13 @@ public class TextCard extends KCard<KText> {
     }
 
     @Override
-    public void onRender() {
+    public void init() {
         setOnLinkListener();
+    }
+
+    @OnKStringChanged("text1")
+    public void updateText1(@NotNull TextView v, @NotNull String s) {
+        v.setText(s);
+        Log.d("TextCard", "custom updater!");
     }
 }

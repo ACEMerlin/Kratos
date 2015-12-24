@@ -1,6 +1,7 @@
 package kratos.card
 
 import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import de.greenrobot.event.EventBus
@@ -8,6 +9,7 @@ import kratos.card.entity.KData
 import kratos.card.event.KOnClickEvent
 import kratos.card.render.Style
 import kratos.card.utils.Skip
+import kotlin.properties.Delegates
 
 open class KCard<T : KData>(@Skip val context: Context) {
 
@@ -18,7 +20,13 @@ open class KCard<T : KData>(@Skip val context: Context) {
     @Skip
     var rootView: View? = null
     @Skip
-    var layoutId = 0
+    var layoutId by Delegates.observable(0) {
+        d, old, new ->
+        if (old != new) {
+            val inflater = (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)) as LayoutInflater
+            rootView = inflater.inflate(new, null)
+        }
+    }
 
     protected fun setOnLinkListener() {
         rootView?.setOnClickListener { onLink() }
@@ -57,5 +65,6 @@ open class KCard<T : KData>(@Skip val context: Context) {
         EventBus.getDefault().post(KOnClickEvent(id, data, url, position))
     }
 
-    public open fun onRender() {}
+    public open fun init() {
+    }
 }

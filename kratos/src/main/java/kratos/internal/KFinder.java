@@ -2,7 +2,6 @@ package kratos.internal;
 
 import android.app.Activity;
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 
 import kratos.card.KCard;
@@ -26,12 +25,6 @@ public enum KFinder {
         @Override
         protected View findView(Object source, int id) {
             KCard card = (KCard) source;
-            if (card.getRootView() == null) {
-                LayoutInflater inflater = (LayoutInflater) getContext(source).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                if (card.getLayoutId() != 0) {
-                    card.setRootView(inflater.inflate(card.getLayoutId(), null));
-                }
-            }
             return (card.getRootView()).findViewById(id);
         }
 

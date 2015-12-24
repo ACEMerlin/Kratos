@@ -12,6 +12,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.lang.model.element.Modifier;
+
 import static javax.lang.model.element.Modifier.FINAL;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
@@ -27,11 +29,14 @@ public class BindingClass {
     private String parentViewBinder;
     private static final ClassName KBINDER = ClassName.get("kratos.internal", "KBinder");
     private static final ClassName KFINDER = ClassName.get("kratos.internal", "KFinder");
+    private static final ClassName VIEW = ClassName.get("android.view", "View");
+    private static final ClassName ONUPDATELISTENER = ClassName.get("kratos.internal.KString", "OnUpdateListener");
     static final int NO_ID = -1;
     private final boolean isLibrary;
     private final boolean isKotlin;
 
     private final Map<String, KBindings> viewIdMap = new LinkedHashMap<>();
+    private final Map<String, UpdateKStringBinding> updateKStringBindingMap = new LinkedHashMap<>();
     private String layoutId;
 
     public void setLayoutId(String layoutId) {
@@ -84,9 +89,15 @@ public class BindingClass {
                 result.addStatement("target.setLayoutId($L)", Integer.parseInt(layoutId));
             else
                 result.addStatement("target.setLayoutId($T.layout.$L)", resClass, layoutId);
+            result.addStatement("target.init()");
+        }
+        if (!updateKStringBindingMap.isEmpty()) {
+            for (Map.Entry<String, UpdateKStringBinding> entry : updateKStringBindingMap.entrySet()) {
+                addKStringUpdateBindings(result, entry);
+            }
         }
         if (!viewIdMap.isEmpty()) {
-            result.addStatement("$T view", ClassName.get("android.view", "View"));
+            result.addStatement("$T view", VIEW);
             // Loop over each view bindings and emit it.
             for (KBindings bindings : viewIdMap.values()) {
                 addKBindings(result, bindings);
@@ -94,13 +105,29 @@ public class BindingClass {
         }
         if (!doubleBindingMap.isEmpty()) {
             if (viewIdMap.isEmpty()) {
-                result.addStatement("$T view", ClassName.get("android.view", "View"));
+                result.addStatement("$T view", VIEW);
             }
             for (Map.Entry<Integer, String> entry : doubleBindingMap.entrySet()) {
                 addDoubleBindings(result, entry);
             }
-         }
+        }
         return result.build();
+    }
+
+    private void addKStringUpdateBindings(MethodSpec.Builder result, Map.Entry<String, UpdateKStringBinding> entry) {
+        UpdateKStringBinding binding = entry.getValue();
+        TypeSpec update = TypeSpec.anonymousClassBuilder("")
+                .addSuperinterface(ONUPDATELISTENER)
+                .addMethod(MethodSpec.methodBuilder("update")
+                        .addAnnotation(Override.class)
+                        .addModifiers(Modifier.PUBLIC)
+                        .addParameter(VIEW, "v")
+                        .addParameter(String.class, "s")
+                        .returns(void.class)
+                        .addStatement("target.$L(($L)$N, $N)", binding.getMethodName(), binding.getParameterTypes()[0], "v", "s")
+                        .build())
+                .build();
+        result.addStatement("target.getData().$L.setOnUpdateListener($L)", entry.getKey(), update);
     }
 
     private void addDoubleBindings(MethodSpec.Builder result, Map.Entry<Integer, String> entry) {
@@ -140,9 +167,9 @@ public class BindingClass {
         Collection<FieldViewBinding> fieldBindings = bindings.getFieldBindings();
         for (FieldViewBinding fieldBinding : fieldBindings) {
             if (fieldBinding.requiresCast()) {
-                result.addStatement("$T $L = finder.castView(view)", ClassName.get("android.view", "View"), fieldBinding.getName() + bindings.getId());
+                result.addStatement("$T $L = finder.castView(view)", VIEW, fieldBinding.getName() + bindings.getId());
             } else {
-                result.addStatement("$T $L = view", ClassName.get("android.view", "View"), fieldBinding.getName() + bindings.getId());
+                result.addStatement("$T $L = view", VIEW, fieldBinding.getName() + bindings.getId());
             }
             if (isKotlin) {
                 String name = fieldBinding.getName();
@@ -175,8 +202,14 @@ public class BindingClass {
     public void addDoubleBinding(int id, String data) {
         String mData = doubleBindingMap.get(id);
         if (mData == null) {
-            mData = data;
             doubleBindingMap.put(id, data);
+        }
+    }
+
+    public void addKStringUpdateBinding(String kstring, UpdateKStringBinding binding) {
+        UpdateKStringBinding mData = updateKStringBindingMap.get(kstring);
+        if (mData == null) {
+            updateKStringBindingMap.put(kstring, binding);
         }
     }
 }

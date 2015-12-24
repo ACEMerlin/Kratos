@@ -118,11 +118,13 @@ To Create a card consists of two TextView that can also handle click even2
        }
 
        @Override
-       public void onRender() {
+       public void init() {
            setOnLinkListener();
        }
 	}
 	```
+   
+   You should initailize your stuff inside `init` function, not constructor;
    
    Notice that it uses `BindLayout` to specify its layout:
    
@@ -203,16 +205,33 @@ To Create a card consists of two TextView that can also handle click even2
 	
 	You can use kratos' util function to pass json file to your next activity:
 	
-	```
+	```java
 	ActivityUtils.jump(SimpleActivity.this, CardSampleActivity.class, CODE_CARD_SAMPLE, R.raw.sample);
-
 	```
 	
-5. Create a package-info.java file in your source folder.
+5. Create a package-info.java file in your source folder like this:
+
+    ```java
+    @PackageName package me.ele.kratos_sample;
+    
+    import kratos.PackageName;
+    ```
 
 You will get something like this:
 
 ![Deme](images/demo.png)
+
+### Add Custom updater:
+
+If you want a custom update behavior when data been changed, add a function annotated with `OnKStringChanged` to your card, like this:
+
+```java
+@OnKStringChanged("text1")
+public void updateText1(@NotNull TextView v, @NotNull String s) {
+    v.setText(s);
+    Log.d("TextCard", "custom updater!");
+}
+```
 
 Download
 -----------------
@@ -223,7 +242,7 @@ Kratos is available from maven central:
 ```groovy
 apply plugin: 'com.neenbedankt.android-apt'
 buildscript {
-    ext.kratos_version = '0.2.0'
+    ext.kratos_version = '0.2.1'
     repositories {
         mavenCentral()
     }
