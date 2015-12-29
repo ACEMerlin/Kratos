@@ -11,7 +11,7 @@ import kratos.card.render.Style
 import kratos.card.utils.Skip
 import kotlin.properties.Delegates
 
-open class KCard<T : KData>(val context: Context) {
+open class KCard<T : KData>(@Skip val context: Context) {
 
     var id: String? = null
     var data: T? = null
