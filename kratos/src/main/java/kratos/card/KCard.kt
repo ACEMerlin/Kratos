@@ -8,6 +8,7 @@ import de.greenrobot.event.EventBus
 import kratos.card.entity.KData
 import kratos.card.event.KOnClickEvent
 import kratos.card.render.Style
+import kratos.card.utils.Skip
 import kotlin.properties.Delegates
 
 open class KCard<T : KData>(val context: Context) {
@@ -16,6 +17,7 @@ open class KCard<T : KData>(val context: Context) {
     var data: T? = null
     var url: String? = null
     var style: Style? = null
+    @Skip
     var rootView: View? = null
     var layoutId by Delegates.observable(0) {
         d, old, new ->

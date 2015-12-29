@@ -6,7 +6,6 @@ import com.google.gson.JsonParser;
 /**
  * To verify whether a json is legal
  * Created by Wayne on 15/12/25.
- *
  */
 public class JsonVerify {
 

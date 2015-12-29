@@ -32,8 +32,8 @@ public class GsonUtils {
         GsonBuilder gsonBuilder = new GsonBuilder().addSerializationExclusionStrategy(new ExclusionStrategy() {
             @Override
             public boolean shouldSkipField(FieldAttributes fieldAttributes) {
-                return fieldAttributes.getDeclaredClass().getName().startsWith("android.")
-                        || fieldAttributes.getName().endsWith("$delegate");
+                return fieldAttributes.getName().endsWith("$delegate")
+                        || fieldAttributes.getAnnotation(Skip.class) != null;
             }
 
             @Override
@@ -43,8 +43,8 @@ public class GsonUtils {
         }).addDeserializationExclusionStrategy(new ExclusionStrategy() {
             @Override
             public boolean shouldSkipField(FieldAttributes fieldAttributes) {
-                return fieldAttributes.getDeclaredClass().getName().startsWith("android.")
-                        || fieldAttributes.getName().endsWith("$delegate");
+                return fieldAttributes.getName().endsWith("$delegate")
+                        || fieldAttributes.getAnnotation(Skip.class) != null;
             }
 
             @Override
