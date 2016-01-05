@@ -19,7 +19,6 @@ open class KCard<T : KData>(@Skip val context: Context) {
     var style: Style? = null
     @Skip
     var rootView: View? = null
-    @Skip
     var layoutId by Delegates.observable(0) {
         d, old, new ->
         if (old != new) {
