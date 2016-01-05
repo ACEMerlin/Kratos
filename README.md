@@ -14,7 +14,7 @@ Provide basic __Double Binding(Data Binding)__ feature on Android.
 
 ### Data Binding
 
-The following code demostrate that two views(EditText and TextView) bound to one single data(which in the code `boundData` holds the data. you can later access or change the data by using `boundDate.data`)
+The following code demostrate that two views(EditText and TextView) bound to one single data(which in the code `boundData` holds the data. you can later access or change the data by using `boundData.get()` and `boundData.set("some string")`)
 
 ```java
 public class SimpleActivity extends Activity {
@@ -242,7 +242,7 @@ Kratos is available from maven central:
 ```groovy
 apply plugin: 'com.neenbedankt.android-apt'
 buildscript {
-    ext.kratos_version = '0.2.1'
+    ext.kratos_version = '0.2.2'
     repositories {
         mavenCentral()
     }
