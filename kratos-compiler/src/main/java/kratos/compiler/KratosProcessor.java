@@ -39,8 +39,11 @@ import kratos.BindText;
 import kratos.Binds;
 import kratos.LBindLayout;
 import kratos.LBindText;
+import kratos.OnKBooleanChanged;
 import kratos.OnKStringChanged;
 import kratos.PackageName;
+import kratos.compiler.binding.KBooleanBinding;
+import kratos.compiler.binding.KStringBinding;
 
 import static javax.lang.model.SourceVersion.latestSupported;
 import static javax.tools.Diagnostic.Kind.ERROR;
@@ -67,6 +70,7 @@ public class KratosProcessor extends AbstractProcessor {
         types.add(Binds.class.getCanonicalName());
         types.add(Bind.class.getCanonicalName());
         types.add(OnKStringChanged.class.getCanonicalName());
+        types.add(OnKBooleanChanged.class.getCanonicalName());
         return types;
     }
 
@@ -152,14 +156,8 @@ public class KratosProcessor extends AbstractProcessor {
             }
         }
 
-        for (Element element : env.getElementsAnnotatedWith(OnKStringChanged.class)) {
-            if (!SuperficialValidation.validateElement(element)) continue;
-            try {
-                parseOnKStringUpdate(element, targetClassMap, erasedTargetNames);
-            } catch (Exception e) {
-                logParsingError(element, OnKStringChanged.class, e);
-            }
-        }
+        parseOnChangedTarget(env, targetClassMap, erasedTargetNames,
+                OnKStringChanged.class, OnKBooleanChanged.class);
 
         for (Element element : env.getElementsAnnotatedWith(BindText.class)) {
             if (!SuperficialValidation.validateElement(element)) continue;
@@ -188,6 +186,48 @@ public class KratosProcessor extends AbstractProcessor {
         }
 
         return targetClassMap;
+    }
+
+    private void parseOnChangedTarget(RoundEnvironment env, Map<TypeElement, BindingClass> targetClassMap, Set<String> erasedTargetNames, Class... annotationClasses) {
+        for (Class clazz : annotationClasses) {
+            for (Element element : env.getElementsAnnotatedWith(clazz)) {
+                if (!SuperficialValidation.validateElement(element)) continue;
+                try {
+                    parseOnChanged(element, targetClassMap, erasedTargetNames, clazz);
+                } catch (Exception e) {
+                    logParsingError(element, clazz, e);
+                }
+            }
+        }
+    }
+
+    private void parseOnChanged(Element element, Map<TypeElement, BindingClass> targetClassMap,
+                                Set<String> erasedTargetNames, Class annotationClass) {
+        TypeElement enclosingElement = (TypeElement) element.getEnclosingElement();
+        BindingClass bindingClass = getOrCreateTargetClass(targetClassMap, enclosingElement, false, false);
+        TypeMirror mirror = element.asType();
+        if (!(mirror.getKind() == TypeKind.EXECUTABLE))
+            return;
+        String method = element.toString().trim();
+        String methodName = method.substring(0, method.indexOf("("));
+        Matcher m = Pattern.compile("\\(([^)]+)\\)").matcher(method);
+        if (m.find()) {
+            String[] methodTypes = m.group(1).split(",");
+            String key = null;
+            if (annotationClass.equals(OnKStringChanged.class)) {
+                KStringBinding binding = new KStringBinding(methodName, methodTypes);
+                key = element.getAnnotation(OnKStringChanged.class).value();
+                bindingClass.putGeneric(key, binding);
+            } else if (annotationClass.equals(OnKBooleanChanged.class)) {
+                KBooleanBinding binding = new KBooleanBinding(methodName, methodTypes);
+                key = element.getAnnotation(OnKBooleanChanged.class).value();
+                bindingClass.putGeneric(key, binding);
+            } else {
+                error(element, "unknow annotation class type @%s",
+                        annotationClass.getSimpleName());
+            }
+        }
+        erasedTargetNames.add(enclosingElement.toString());
     }
 
     private void parseOnKStringUpdate(Element element, Map<TypeElement, BindingClass> targetClassMap,

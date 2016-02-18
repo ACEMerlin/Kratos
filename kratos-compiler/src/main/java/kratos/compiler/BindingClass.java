@@ -14,6 +14,8 @@ import java.util.Map;
 
 import javax.lang.model.element.Modifier;
 
+import kratos.compiler.binding.KBindingGeneric;
+
 import static javax.lang.model.element.Modifier.FINAL;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
@@ -30,7 +32,6 @@ public class BindingClass {
     private static final ClassName KBINDER = ClassName.get("kratos.internal", "KBinder");
     private static final ClassName KFINDER = ClassName.get("kratos.internal", "KFinder");
     private static final ClassName VIEW = ClassName.get("android.view", "View");
-    private static final ClassName ONUPDATELISTENER = ClassName.get("kratos.internal.KString", "OnUpdateListener");
     static final int NO_ID = -1;
     private final boolean isLibrary;
     private final boolean isKotlin;
@@ -91,9 +92,16 @@ public class BindingClass {
                 result.addStatement("target.setLayoutId($T.layout.$L)", resClass, layoutId);
             result.addStatement("target.init()");
         }
-        if (!updateKStringBindingMap.isEmpty()) {
-            for (Map.Entry<String, UpdateKStringBinding> entry : updateKStringBindingMap.entrySet()) {
-                addKStringUpdateBindings(result, entry);
+        //if (!updateKStringBindingMap.isEmpty()) {
+        //    for (Map.Entry<String, UpdateKStringBinding> entry : updateKStringBindingMap.entrySet()) {
+        //        addKStringUpdateBindings(result, entry);
+        //    }
+        //}
+        if (!map.isEmpty()) {
+            for (Map<String, KBindingGeneric> generics : map.values()) {
+                for (Map.Entry<String, KBindingGeneric> entry : generics.entrySet()) {
+                    entry.getValue().addGenericCode(result, entry.getKey());
+                }
             }
         }
         if (!viewIdMap.isEmpty()) {
@@ -112,22 +120,6 @@ public class BindingClass {
             }
         }
         return result.build();
-    }
-
-    private void addKStringUpdateBindings(MethodSpec.Builder result, Map.Entry<String, UpdateKStringBinding> entry) {
-        UpdateKStringBinding binding = entry.getValue();
-        TypeSpec update = TypeSpec.anonymousClassBuilder("")
-                .addSuperinterface(ONUPDATELISTENER)
-                .addMethod(MethodSpec.methodBuilder("update")
-                        .addAnnotation(Override.class)
-                        .addModifiers(Modifier.PUBLIC)
-                        .addParameter(VIEW, "v")
-                        .addParameter(String.class, "s")
-                        .returns(void.class)
-                        .addStatement("target.$L(($L)$N, $N)", binding.getMethodName(), binding.getParameterTypes()[0], "v", "s")
-                        .build())
-                .build();
-        result.addStatement("target.getData().$L.setOnUpdateListener($L)", entry.getKey(), update);
     }
 
     private void addDoubleBindings(MethodSpec.Builder result, Map.Entry<Integer, String> entry) {
@@ -211,5 +203,20 @@ public class BindingClass {
         if (mData == null) {
             updateKStringBindingMap.put(kstring, binding);
         }
+    }
+
+    private final Map<String, Map<String, KBindingGeneric>> map = new LinkedHashMap<>();
+
+    public void putGeneric(String kstring, KBindingGeneric binding) {
+        String key = binding.getClass().getSimpleName();
+        Map<String, KBindingGeneric> result = map.get(key);
+        if (result == null) {
+            result = new LinkedHashMap<>();
+        }
+        KBindingGeneric mData = result.get(kstring);
+        if (mData == null) {
+            result.put(kstring, binding);
+        }
+        map.put(key, result);
     }
 }
