@@ -5,7 +5,7 @@
   "body": [
     {
       "data": {
-        "text1": "this is text1",
+        "text1": "{Customer.name}",
         "text2": "this is text2"
       },
       "type": "me.ele.kratos_sample.TextCard",

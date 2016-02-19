@@ -7,6 +7,7 @@ import android.view.Menu
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import de.greenrobot.event.EventBus
+import io.nothing.kratos.core.generic.KBase
 import kratos.R
 import kratos.card.entity.KData
 import kratos.card.event.KMenuClickEvent
@@ -15,7 +16,10 @@ import kratos.card.render.Template
 import kratos.card.utils.FixSwipeRefreshLayout
 import kratos.card.utils.GsonUtils
 import kratos.card.utils.OnCardRenderListener
+import kratos.internal.Binding
+import kratos.internal.KString
 import org.json.JSONObject
+import java.util.*
 
 open class KCardActivity : AppCompatActivity() {
     open fun onRender(json: String, filter: (json: String) -> Unit) {
@@ -107,5 +111,39 @@ open class KCardActivity : AppCompatActivity() {
     }
 
     open fun onEventMainThread(event: KMenuClickEvent) {
+    }
+
+    fun getCards(): List<KCard<KData>> {
+        return ArrayList(cards.values)
+    }
+
+    fun getBinding(kcard: KCard<KData>): List<Binding<KBase>> {
+        return Binding.parse(kcard)
+    }
+
+    fun getBindings(): List<Binding<KBase>> {
+        return getCards().flatMap {
+            getBinding(it)
+        }
+    }
+
+    fun bind(activity: KCardActivity, obj: Any) {
+        for (binding in activity.getBindings()) {
+            try {
+                if (binding.value.javaClass.isAssignableFrom(KString::class.java)) {
+                    val shit = binding.value.get() as String
+                    val temp = shit.replace("{", "").replace("}", "").split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    val clazzName = temp[0]
+                    val fieldName = temp[1]
+                    val `object` = obj.javaClass.getField(fieldName).get(obj)
+                    val field = `object` as KString
+                    field.bind(binding.value as KString)
+                }
+            } catch (e: IllegalAccessException) {
+                e.printStackTrace()
+            } catch (e: NoSuchFieldException) {
+                e.printStackTrace()
+            }
+        }
     }
 }

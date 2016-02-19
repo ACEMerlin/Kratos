@@ -14,8 +14,8 @@ class Template : Serializable {
     val footer: MutableList<KCard<KData>> = arrayListOf()
 
     companion object {
-        public val BUNDLE_TEMPLAT: String = "template"
-        public val BUNDLE_URL: String = "url"
+        const val BUNDLE_TEMPLAT: String = "template"
+        const val BUNDLE_URL: String = "url"
     }
 
 }

@@ -233,6 +233,79 @@ public void updateText1(@NotNull TextView v, @NotNull String s) {
 }
 ```
 
+### Wait
+
+*You may say:"That's no big deal. what's the point?"*
+
+*But*
+
+This is where the magic happens!
+-----------------
+
+Assume you have this data object which implements `Parcelable`:
+
+```java
+public class Customer implements Parcelable {
+
+    public KString name = new KString();
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.name, flags);
+    }
+
+    public Customer() {
+    }
+
+    protected Customer(Parcel in) {
+        this.name = in.readParcelable(KString.class.getClassLoader());
+    }
+
+    public static final Creator<Customer> CREATOR = new Creator<Customer>() {
+        public Customer createFromParcel(Parcel source) {
+            return new Customer(source);
+        }
+
+        public Customer[] newArray(int size) {
+            return new Customer[size];
+        }
+    };
+}
+```
+This Customer has a property -- name, and this is what you do.
+
+1. Change the `text1` element in the json file above to this:
+
+```json
+"text1": "{Customer.name}",
+```
+
+2. Add this code to your activity:
+
+```java
+Customer customer;
+@Override
+public void onFinishRender() {
+    bind(this, customer);
+}
+```
+Tada!!From now on, if you want to change the view that has Customer's name in it, all you need to do is change the value of `customer.name`, say you do this:
+ 
+ ```java
+ customer.name.set("Merlin");
+ ``` 
+ This is what you get:
+ 
+ ![Customer](images/customer.png)
+ 
+ Dude, Holy ****, This is Magic..
+ 
+
 Download
 -----------------
 __Kratos is still under development and a lot of features haven't been added to it yet.__ But the basic idea is here. If you are interested in this project, feel free to fork.

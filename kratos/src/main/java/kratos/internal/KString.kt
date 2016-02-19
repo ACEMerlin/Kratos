@@ -1,5 +1,7 @@
 package kratos.internal
 
+import android.os.Parcel
+import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -12,7 +14,33 @@ import kotlin.properties.Delegates
 /**
  * Created by merlin on 15/11/19.
  */
-class KString() : KBase() {
+class KString() : KBase(), Parcelable {
+
+    companion object {
+        val CREATOR: Parcelable.Creator<KString> = object : Parcelable.Creator<KString> {
+            override fun createFromParcel(source: Parcel): KString {
+                return KString(source)
+            }
+
+            override fun newArray(size: Int): Array<KString> {
+                return Array(size, { KString() })
+            }
+        }
+    }
+
+    protected constructor(`in`: Parcel) : this() {
+        this.data = `in`.readString()
+        `in`.readTypedList<KString>(this.kstrings, KString.CREATOR)
+    }
+
+    override fun writeToParcel(dest: Parcel?, flags: Int) {
+        dest?.writeString(data)
+        dest?.writeTypedList<KString>(kstrings)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
 
     interface OnUpdateListener {
         fun update(view: View, new: String)
