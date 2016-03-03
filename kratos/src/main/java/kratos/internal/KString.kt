@@ -17,6 +17,7 @@ import kotlin.properties.Delegates
 class KString() : KBase(), Parcelable {
 
     companion object {
+        @JvmField
         val CREATOR: Parcelable.Creator<KString> = object : Parcelable.Creator<KString> {
             override fun createFromParcel(source: Parcel): KString {
                 return KString(source)
