@@ -1,6 +1,10 @@
 Kratos
 =============
 
+本项目旨在用来展示一个学习的样本，而不是用于生产环境，如果要用于生产的话，我建议使用React Native。Kratos展示了如何利用Annotation Processor和Javapoet在编译时期生成代码，达到类似Lisp宏一样的基础效果（实际差得远），实现Annotation free；还展示了利用Kolin语言的Delegate，实现检测变量的变化；最重要的是，展示了一套利用Json来渲染View的思路，并在Json中做配置，利用反射实现数据的View的绑定。这些代码，有助于帮助你理解React Native，比如Kotlin对应着Js，Json配置文件作为外部DSL对应着Jsx。
+
+其实本想着实现一个用Lisp在Android上开发的框架，无奈本人太菜，算了，以后再说，先研究React Native好了  ╮(╯▽╰)╭
+
 ![Logo](images/logo.jpg)
 
 Provide basic __Double Binding(Data Binding)__ feature on Android.
